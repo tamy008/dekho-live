@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dekho - Live Shopping</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      background-color: #0f0f0f;
+      color: white;
+      font-family: sans-serif;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="border-b border-blue-700">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center space-x-8">
+        <h1 class="text-3xl font-bold bg-gradient-to-r from-pink-500 to-cyan-400 bg-clip-text text-transparent">DEKHO</h1>
+        <nav class="hidden md:flex space-x-6 text-gray-300">
+          <a href="#" class="hover:text-pink-400">Live</a>
+          <a href="#" class="hover:text-pink-400">Auctions</a>
+          <a href="#" class="hover:text-pink-400">Categories</a>
+          <a href="#" class="hover:text-pink-400">Sell</a>
+        </nav>
+      </div>
+      <div class="hidden md:flex space-x-4 items-center">
+        <input type="text" placeholder="Search..." class="rounded-full bg-gray-800 border border-gray-700 px-4 py-2 w-64 text-sm" />
+        <i data-lucide="bell" class="text-gray-400 hover:text-pink-400 cursor-pointer"></i>
+        <i data-lucide="user" class="text-gray-400 hover:text-pink-400 cursor-pointer"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="py-16 px-4 text-center">
+    <h2 class="text-5xl font-bold mb-6 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-400 bg-clip-text text-transparent">Live Shopping Revolution</h2>
+    <p class="text-xl text-gray-300 max-w-2xl mx-auto mb-8">Join millions in real-time auctions. Bid, buy, and discover unique items from passionate sellers worldwide.</p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <button class="bg-pink-500 hover:bg-pink-600 px-6 py-3 rounded-full font-semibold">▶ Start Watching</button>
+      <button class="border-2 border-blue-600 hover:bg-blue-600 px-6 py-3 rounded-full font-semibold text-blue-400">📷 Go Live</button>
+    </div>
+  </section>
+
+  <!-- Live Streams (Mockup) -->
+  <section class="px-4 max-w-7xl mx-auto mb-16">
+    <h3 class="text-3xl font-bold mb-6 text-pink-400">🔴 Live Now</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="rounded-lg border border-gray-800 bg-[#1a1a1a] p-4">
+        <div class="h-40 rounded bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white font-bold text-lg">Sony Walkman</div>
+        <h4 class="mt-4 font-semibold text-lg">Vintage Electronics Auction</h4>
+        <p class="text-gray-400 text-sm">Host: @TechCollector</p>
+        <p class="text-cyan-400 text-sm">Current Bid: $85</p>
+      </div>
+      <div class="rounded-lg border border-gray-800 bg-[#1a1a1a] p-4">
+        <div class="h-40 rounded bg-gradient-to-br from-pink-600 to-red-600 flex items-center justify-center text-white font-bold text-lg">Air Jordans</div>
+        <h4 class="mt-4 font-semibold text-lg">Sneaker Drop</h4>
+        <p class="text-gray-400 text-sm">Host: @SneakerHead</p>
+        <p class="text-cyan-400 text-sm">Current Bid: $320</p>
+      </div>
+      <div class="rounded-lg border border-gray-800 bg-[#1a1a1a] p-4">
+        <div class="h-40 rounded bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-black font-bold text-lg">Charizard</div>
+        <h4 class="mt-4 font-semibold text-lg">Rare Pokemon Cards</h4>
+        <p class="text-gray-400 text-sm">Host: @CardMaster</p>
+        <p class="text-cyan-400 text-sm">Current Bid: $450</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-gray-800 py-12 px-4 text-gray-400 text-center text-sm">
+    <p>&copy; 2025 Dekho. All rights reserved.</p>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
