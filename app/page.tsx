@@ -2,7 +2,23 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
-import { Play, Heart, ShoppingCart, Users, Star, MapPin, Clock, Zap, TrendingUp, Gift, Sparkles } from "lucide-react"
+import {
+  Play,
+  Heart,
+  ShoppingCart,
+  Users,
+  Star,
+  MapPin,
+  Clock,
+  Zap,
+  TrendingUp,
+  Gift,
+  Sparkles,
+  Search,
+  Menu,
+  X,
+  Bell,
+} from "lucide-react"
 
 interface LiveStream {
   id: string
@@ -22,7 +38,6 @@ interface LiveStream {
 interface Category {
   id: string
   name: string
-  nameHindi: string
   icon: string
   count: number
 }
@@ -30,7 +45,7 @@ interface Category {
 const liveStreams: LiveStream[] = [
   {
     id: "1",
-    title: "Banarasi Silk Sarees - Diwali Special Collection",
+    title: "Banarasi Silk Sarees - Festival Special Collection",
     seller: "Priya Textiles",
     viewers: 1247,
     category: "Fashion",
@@ -39,7 +54,7 @@ const liveStreams: LiveStream[] = [
     location: "Varanasi, UP",
     rating: 4.8,
     isLive: true,
-    thumbnail: "/placeholder.svg?height=200&width=300&text=Banarasi+Sarees",
+    thumbnail: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=400&h=300&fit=crop&crop=center",
     discount: "40% OFF",
   },
   {
@@ -52,11 +67,11 @@ const liveStreams: LiveStream[] = [
     location: "Mumbai, MH",
     rating: 4.9,
     isLive: true,
-    thumbnail: "/placeholder.svg?height=200&width=300&text=iPhone+15+Pro",
+    thumbnail: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&h=300&fit=crop&crop=center",
   },
   {
     id: "3",
-    title: "Handcrafted Home Decor - Diwali Diyas & Rangoli",
+    title: "Handcrafted Home Decor - Festival Diyas & Rangoli",
     seller: "Artisan Crafts",
     viewers: 892,
     category: "Home & Decor",
@@ -65,7 +80,7 @@ const liveStreams: LiveStream[] = [
     location: "Jaipur, RJ",
     rating: 4.7,
     isLive: true,
-    thumbnail: "/placeholder.svg?height=200&width=300&text=Diwali+Decor",
+    thumbnail: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&crop=center",
     discount: "40% OFF",
   },
   {
@@ -79,7 +94,7 @@ const liveStreams: LiveStream[] = [
     location: "Bangalore, KA",
     rating: 4.6,
     isLive: true,
-    thumbnail: "/placeholder.svg?height=200&width=300&text=Ayurvedic+Beauty",
+    thumbnail: "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=400&h=300&fit=crop&crop=center",
     discount: "32% OFF",
   },
   {
@@ -93,7 +108,7 @@ const liveStreams: LiveStream[] = [
     location: "Delhi, DL",
     rating: 4.8,
     isLive: true,
-    thumbnail: "/placeholder.svg?height=200&width=300&text=Kundan+Jewelry",
+    thumbnail: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=300&fit=crop&crop=center",
     discount: "42% OFF",
   },
   {
@@ -107,26 +122,62 @@ const liveStreams: LiveStream[] = [
     location: "Pune, MH",
     rating: 4.7,
     isLive: true,
-    thumbnail: "/placeholder.svg?height=200&width=300&text=Gaming+Setup",
+    thumbnail: "https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=400&h=300&fit=crop&crop=center",
     discount: "38% OFF",
+  },
+  {
+    id: "7",
+    title: "Fresh Spices & Masalas - Authentic Indian Flavors",
+    seller: "Spice Garden",
+    viewers: 678,
+    category: "Food & Grocery",
+    price: "₹299",
+    originalPrice: "₹499",
+    location: "Kerala, KL",
+    rating: 4.9,
+    isLive: true,
+    thumbnail: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&h=300&fit=crop&crop=center",
+    discount: "40% OFF",
+  },
+  {
+    id: "8",
+    title: "Handwoven Cotton Kurtas - Comfort & Style",
+    seller: "Ethnic Wear Hub",
+    viewers: 1123,
+    category: "Fashion",
+    price: "₹899",
+    originalPrice: "₹1,499",
+    location: "Lucknow, UP",
+    rating: 4.6,
+    isLive: true,
+    thumbnail: "https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=400&h=300&fit=crop&crop=center",
+    discount: "40% OFF",
   },
 ]
 
 const categories: Category[] = [
-  { id: "1", name: "Fashion", nameHindi: "फैशन", icon: "👗", count: 234 },
-  { id: "2", name: "Electronics", nameHindi: "इलेक्ट्रॉनिक्स", icon: "📱", count: 156 },
-  { id: "3", name: "Home & Decor", nameHindi: "घर और सजावट", icon: "🏠", count: 189 },
-  { id: "4", name: "Beauty", nameHindi: "सुंदरता", icon: "💄", count: 98 },
-  { id: "5", name: "Jewelry", nameHindi: "आभूषण", icon: "💍", count: 145 },
-  { id: "6", name: "Sports", nameHindi: "खेल", icon: "⚽", count: 67 },
+  { id: "1", name: "Fashion", icon: "👗", count: 234 },
+  { id: "2", name: "Electronics", icon: "📱", count: 156 },
+  { id: "3", name: "Home & Decor", icon: "🏠", count: 189 },
+  { id: "4", name: "Beauty", icon: "💄", count: 98 },
+  { id: "5", name: "Jewelry", icon: "💍", count: 145 },
+  { id: "6", name: "Sports", icon: "⚽", count: 67 },
 ]
 
 const LiveStreamCard: React.FC<{ stream: LiveStream }> = ({ stream }) => {
+  const [imageError, setImageError] = useState(false)
+
   return (
     <div className="live-stream-card group">
       <div className="relative">
-        <img src={stream.thumbnail || "/placeholder.svg"} alt={stream.title} className="w-full h-48 object-cover" />
-        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors">
+        <img
+          src={imageError ? "/placeholder.svg?height=200&width=300&text=Live+Stream" : stream.thumbnail}
+          alt={stream.title}
+          className="w-full h-48 object-cover"
+          onError={() => setImageError(true)}
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent">
           <div className="absolute top-3 left-3">
             <div className="live-badge">
               <div className="live-dot"></div>
@@ -135,15 +186,17 @@ const LiveStreamCard: React.FC<{ stream: LiveStream }> = ({ stream }) => {
           </div>
           <div className="absolute top-3 right-3 flex gap-2">
             {stream.discount && (
-              <span className="bg-indian-red text-white px-2 py-1 rounded text-xs font-bold">{stream.discount}</span>
+              <span className="bg-secondary-gradient text-white px-2 py-1 rounded-lg text-xs font-bold shadow-neon">
+                {stream.discount}
+              </span>
             )}
           </div>
-          <div className="absolute bottom-3 left-3 flex items-center gap-1 text-white text-sm">
+          <div className="absolute bottom-3 left-3 flex items-center gap-1 text-white text-sm bg-black/60 px-3 py-1 rounded-full backdrop-blur-sm">
             <Users size={16} />
-            <span>{stream.viewers.toLocaleString()}</span>
+            <span className="glow-text">{stream.viewers.toLocaleString()}</span>
           </div>
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-            <button className="bg-white/90 hover:bg-white text-gray-900 rounded-full p-3 transition-colors">
+            <button className="neon-button rounded-full p-4">
               <Play size={24} fill="currentColor" />
             </button>
           </div>
@@ -151,33 +204,35 @@ const LiveStreamCard: React.FC<{ stream: LiveStream }> = ({ stream }) => {
       </div>
 
       <div className="p-4">
-        <div className="flex items-start justify-between mb-2">
-          <h3 className="font-semibold text-gray-900 line-clamp-2 flex-1 mr-2">{stream.title}</h3>
-          <button className="text-gray-400 hover:text-red-500 transition-colors">
+        <div className="flex items-start justify-between mb-3">
+          <h3 className="font-semibold text-white line-clamp-2 flex-1 mr-2">{stream.title}</h3>
+          <button className="text-muted-gray hover:text-electric-pink transition-colors">
             <Heart size={20} />
           </button>
         </div>
 
-        <div className="flex items-center gap-2 mb-2">
+        <div className="flex items-center gap-2 mb-3">
           <div className="seller-badge">✓ Verified</div>
-          <span className="text-sm text-gray-600">{stream.seller}</span>
+          <span className="text-sm text-muted-gray">{stream.seller}</span>
         </div>
 
-        <div className="flex items-center gap-1 mb-2">
-          <MapPin size={14} className="text-gray-400" />
-          <span className="text-sm text-gray-600">{stream.location}</span>
+        <div className="flex items-center gap-1 mb-3">
+          <MapPin size={14} className="text-muted-gray" />
+          <span className="text-sm text-muted-gray">{stream.location}</span>
           <div className="flex items-center gap-1 ml-2">
-            <Star size={14} className="text-yellow-400 fill-current" />
-            <span className="text-sm text-gray-600">{stream.rating}</span>
+            <Star size={14} className="text-neon-green fill-current" />
+            <span className="text-sm text-muted-gray">{stream.rating}</span>
           </div>
         </div>
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-lg font-bold text-gray-900">{stream.price}</span>
-            {stream.originalPrice && <span className="text-sm text-gray-500 line-through">{stream.originalPrice}</span>}
+            <span className="text-lg font-bold neon-text">{stream.price}</span>
+            {stream.originalPrice && (
+              <span className="text-sm text-muted-gray line-through">{stream.originalPrice}</span>
+            )}
           </div>
-          <button className="bg-saffron hover:bg-saffron/90 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2">
+          <button className="accent-button flex items-center gap-2">
             <ShoppingCart size={16} />
             Buy Now
           </button>
@@ -189,12 +244,11 @@ const LiveStreamCard: React.FC<{ stream: LiveStream }> = ({ stream }) => {
 
 const CategoryCard: React.FC<{ category: Category }> = ({ category }) => {
   return (
-    <div className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow cursor-pointer group">
+    <div className="category-card group">
       <div className="text-center">
-        <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">{category.icon}</div>
-        <h3 className="font-semibold text-gray-900 mb-1">{category.name}</h3>
-        <p className="text-sm text-gray-600 mb-2">{category.nameHindi}</p>
-        <span className="text-xs text-gray-500">{category.count} live shows</span>
+        <div className="text-4xl mb-3 group-hover:scale-110 transition-transform floating-element">{category.icon}</div>
+        <h3 className="font-semibold text-white mb-1">{category.name}</h3>
+        <span className="text-xs text-muted-gray">{category.count} live shows</span>
       </div>
     </div>
   )
@@ -202,6 +256,8 @@ const CategoryCard: React.FC<{ category: Category }> = ({ category }) => {
 
 export default function HomePage() {
   const [currentTime, setCurrentTime] = useState(new Date())
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -212,89 +268,126 @@ export default function HomePage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-deep-black">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="glass-effect sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
-              <div className="header-logo-3d">
+              <div className="header-logo">
                 <img src="/dekho-logo.png" alt="Dekho Live" className="h-8 w-auto" />
               </div>
               <div>
-                <h1 className="text-xl font-bold gradient-text">Dekho Live</h1>
-                <p className="text-xs text-gray-600">देखो लाइव</p>
+                <h1 className="text-xl font-bold neon-text">Dekho Live</h1>
+                <p className="text-xs text-muted-gray">Future of Shopping</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-4">
-              <div className="hidden md:flex items-center gap-2 text-sm text-gray-600">
+            <div className="hidden md:flex items-center gap-6">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-gray" size={16} />
+                <input
+                  type="text"
+                  placeholder="Search live shows..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="neon-input pl-10 w-64"
+                />
+              </div>
+              <div className="flex items-center gap-2 text-sm text-muted-gray">
                 <Clock size={16} />
                 <span>{currentTime.toLocaleTimeString("en-IN")}</span>
               </div>
-              <button className="bg-emerald hover:bg-emerald/90 text-white px-4 py-2 rounded-lg font-medium transition-colors">
-                Start Selling
+              <button className="relative p-2 text-muted-gray hover:text-electric-pink transition-colors">
+                <Bell size={20} />
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary-gradient rounded-full animate-pulse-neon"></span>
               </button>
+              <button className="secondary-button">Start Selling</button>
             </div>
+
+            <button className="md:hidden text-white" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
           </div>
         </div>
+
+        {isMenuOpen && (
+          <div className="md:hidden glass-effect border-t border-white/10">
+            <div className="px-4 py-4 space-y-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-gray" size={16} />
+                <input type="text" placeholder="Search live shows..." className="neon-input pl-10 w-full" />
+              </div>
+              <button className="w-full secondary-button">Start Selling</button>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Hero Section */}
-      <section className="indian-gradient py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-6xl font-bold text-white mb-4 text-3d-effect">
-            India's #1 Live Shopping Platform
+      <section className="relative py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-electric-pink/10 via-transparent to-neon-cyan/10"></div>
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-electric-pink/20 rounded-full blur-3xl animate-float"></div>
+        <div
+          className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-neon-cyan/20 rounded-full blur-2xl animate-float"
+          style={{ animationDelay: "1s" }}
+        ></div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-5xl md:text-7xl font-bold mb-6 animate-fade-in">
+            <span className="neon-text glow-text">India's Most</span>
+            <br />
+            <span className="bg-secondary-gradient bg-clip-text text-transparent">Vibrant Live Shopping</span>
           </h2>
-          <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-            Watch, Shop, and Connect with authentic sellers across India.
-            <span className="block mt-2 font-medium">भारत का सबसे बड़ा लाइव शॉपिंग प्लेटफॉर्म</span>
+          <p className="text-xl text-muted-gray mb-8 max-w-2xl mx-auto animate-slide-up">
+            Experience the future of commerce with real-time shopping, authentic sellers, and electrifying deals.
+            <span className="block mt-2 text-neon-green font-medium">Join the revolution today!</span>
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <button className="bg-white text-gray-900 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors flex items-center gap-2">
-              <Play size={20} fill="currentColor" />
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-slide-up">
+            <button className="neon-button flex items-center gap-2 text-lg px-8 py-4">
+              <Play size={24} fill="currentColor" />
               Watch Live Shows
             </button>
-            <button className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-gray-900 transition-colors">
-              Browse Categories
-            </button>
+            <button className="secondary-button text-lg px-8 py-4">Explore Categories</button>
           </div>
         </div>
       </section>
 
       {/* Stats Section */}
-      <section className="py-8 bg-white">
+      <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div className="cohesive-3d-element">
-              <div className="text-3xl font-bold text-saffron mb-2">50K+</div>
-              <div className="text-sm text-gray-600">Live Sellers</div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="stats-card">
+              <div className="text-3xl font-bold neon-text mb-2">50K+</div>
+              <div className="text-sm text-muted-gray">Live Sellers</div>
             </div>
-            <div className="cohesive-3d-element">
-              <div className="text-3xl font-bold text-emerald mb-2">2M+</div>
-              <div className="text-sm text-gray-600">Happy Customers</div>
+            <div className="stats-card">
+              <div className="text-3xl font-bold bg-secondary-gradient bg-clip-text text-transparent mb-2">2M+</div>
+              <div className="text-sm text-muted-gray">Happy Customers</div>
             </div>
-            <div className="cohesive-3d-element">
-              <div className="text-3xl font-bold text-indian-red mb-2">100+</div>
-              <div className="text-sm text-gray-600">Cities Covered</div>
+            <div className="stats-card">
+              <div className="text-3xl font-bold text-neon-green mb-2">100+</div>
+              <div className="text-sm text-muted-gray">Cities Covered</div>
             </div>
-            <div className="cohesive-3d-element">
-              <div className="text-3xl font-bold text-navy mb-2">24/7</div>
-              <div className="text-sm text-gray-600">Live Shows</div>
+            <div className="stats-card">
+              <div className="text-3xl font-bold bg-accent-gradient bg-clip-text text-transparent mb-2">24/7</div>
+              <div className="text-sm text-muted-gray">Live Shows</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Categories Section */}
-      <section className="py-12">
+      <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Shop by Categories</h2>
-            <p className="text-gray-600">श्रेणियों के अनुसार खरीदारी करें</p>
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">
+              <span className="neon-text">Shop by Categories</span>
+            </h2>
+            <p className="text-muted-gray text-lg">Discover amazing products across all categories</p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
             {categories.map((category) => (
               <CategoryCard key={category.id} category={category} />
             ))}
@@ -303,23 +396,25 @@ export default function HomePage() {
       </section>
 
       {/* Live Shows Section */}
-      <section className="py-12 bg-white">
+      <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-12">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">Live Shows Now</h2>
-              <p className="text-gray-600 flex items-center gap-2">
-                <Zap className="text-red-500" size={16} />
-                {liveStreams.length} sellers are live right now
+              <h2 className="text-4xl font-bold mb-2">
+                <span className="neon-text glow-text">Live Shows Now</span>
+              </h2>
+              <p className="text-muted-gray flex items-center gap-2 text-lg">
+                <Zap className="text-electric-pink animate-pulse-neon" size={20} />
+                {liveStreams.length} sellers broadcasting live
               </p>
             </div>
-            <button className="text-saffron hover:text-saffron/80 font-medium flex items-center gap-2">
+            <button className="neon-button flex items-center gap-2">
               View All
               <TrendingUp size={16} />
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {liveStreams.map((stream) => (
               <LiveStreamCard key={stream.id} stream={stream} />
             ))}
@@ -328,66 +423,66 @@ export default function HomePage() {
       </section>
 
       {/* Special Offers Section */}
-      <section className="py-12 bg-gradient-to-r from-saffron/10 via-white to-emerald/10">
+      <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-2">
-              <Gift className="text-indian-red" />
-              Diwali Special Offers
-              <Sparkles className="text-turmeric" />
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4 flex items-center justify-center gap-4">
+              <Gift className="text-electric-pink animate-bounce-gentle" />
+              <span className="neon-text">Festival Mega Sale</span>
+              <Sparkles className="text-neon-green animate-bounce-gentle" />
             </h2>
-            <p className="text-gray-600">दिवाली के विशेष ऑफर्स</p>
+            <p className="text-muted-gray text-lg">Electrifying deals that'll blow your mind!</p>
           </div>
 
-          <div className="bg-white rounded-2xl p-8 shadow-xl text-center">
-            <div className="text-6xl mb-4">🪔</div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">Festival Sale Live Now!</h3>
-            <p className="text-gray-600 mb-6">Up to 70% off on traditional wear, home decor, and jewelry</p>
-            <button className="bg-gradient-to-r from-saffron to-indian-red text-white px-8 py-3 rounded-lg font-semibold hover:shadow-lg transition-shadow">
-              Shop Festival Collection
-            </button>
+          <div className="glass-effect rounded-3xl p-12 text-center neon-border animate-glow">
+            <div className="text-8xl mb-6 floating-element">🎆</div>
+            <h3 className="text-3xl font-bold mb-4">
+              <span className="bg-primary-gradient bg-clip-text text-transparent">Sale Live Now!</span>
+            </h3>
+            <p className="text-muted-gray mb-8 text-lg">Up to 70% off on fashion, electronics, home decor, and more</p>
+            <button className="neon-button text-xl px-12 py-4">Shop Festival Collection</button>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
+      <footer className="bg-dark-gradient py-16 border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
-              <div className="flex items-center gap-2 mb-4">
-                <img src="/dekho-logo.png" alt="Dekho Live" className="h-8 w-auto" />
-                <span className="text-xl font-bold">Dekho Live</span>
+              <div className="flex items-center gap-2 mb-6">
+                <img src="/dekho-logo.png" alt="Dekho Live" className="h-8 w-auto header-logo" />
+                <span className="text-xl font-bold neon-text">Dekho Live</span>
               </div>
-              <p className="text-gray-400 mb-4">
-                India's premier live shopping platform connecting authentic sellers with customers nationwide.
+              <p className="text-muted-gray mb-6">
+                India's most vibrant live shopping platform connecting authentic sellers with customers nationwide.
               </p>
               <div className="flex gap-4">
                 <span className="text-2xl">🇮🇳</span>
-                <span className="text-sm text-gray-400">Made with ❤️ in India</span>
+                <span className="text-sm text-muted-gray">Made with ❤️ in India</span>
               </div>
             </div>
 
             <div>
-              <h4 className="font-semibold mb-4">Categories</h4>
-              <ul className="space-y-2 text-gray-400">
+              <h4 className="font-semibold mb-6 text-neon-green">Categories</h4>
+              <ul className="space-y-3 text-muted-gray">
                 <li>
-                  <a href="#" className="hover:text-white transition-colors">
+                  <a href="#" className="hover:text-electric-pink transition-colors">
                     Fashion & Clothing
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white transition-colors">
+                  <a href="#" className="hover:text-electric-pink transition-colors">
                     Electronics
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white transition-colors">
+                  <a href="#" className="hover:text-electric-pink transition-colors">
                     Home & Decor
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white transition-colors">
+                  <a href="#" className="hover:text-electric-pink transition-colors">
                     Beauty & Personal Care
                   </a>
                 </li>
@@ -395,25 +490,25 @@ export default function HomePage() {
             </div>
 
             <div>
-              <h4 className="font-semibold mb-4">Support</h4>
-              <ul className="space-y-2 text-gray-400">
+              <h4 className="font-semibold mb-6 text-neon-cyan">Support</h4>
+              <ul className="space-y-3 text-muted-gray">
                 <li>
-                  <a href="#" className="hover:text-white transition-colors">
+                  <a href="#" className="hover:text-neon-cyan transition-colors">
                     Help Center
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white transition-colors">
+                  <a href="#" className="hover:text-neon-cyan transition-colors">
                     Seller Support
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white transition-colors">
+                  <a href="#" className="hover:text-neon-cyan transition-colors">
                     Shipping Info
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white transition-colors">
+                  <a href="#" className="hover:text-neon-cyan transition-colors">
                     Returns & Refunds
                   </a>
                 </li>
@@ -421,17 +516,19 @@ export default function HomePage() {
             </div>
 
             <div>
-              <h4 className="font-semibold mb-4">Payment Methods</h4>
-              <div className="grid grid-cols-3 gap-2 mb-4">
-                <div className="bg-gray-800 rounded p-2 text-center text-xs">UPI</div>
-                <div className="bg-gray-800 rounded p-2 text-center text-xs">Card</div>
-                <div className="bg-gray-800 rounded p-2 text-center text-xs">Wallet</div>
+              <h4 className="font-semibold mb-6 bg-secondary-gradient bg-clip-text text-transparent">
+                Payment Methods
+              </h4>
+              <div className="grid grid-cols-3 gap-2 mb-6">
+                <div className="glass-effect rounded-lg p-3 text-center text-xs font-bold neon-border">UPI</div>
+                <div className="glass-effect rounded-lg p-3 text-center text-xs font-bold neon-border">Card</div>
+                <div className="glass-effect rounded-lg p-3 text-center text-xs font-bold neon-border">Wallet</div>
               </div>
-              <p className="text-gray-400 text-sm">Secure payments powered by leading Indian payment gateways</p>
+              <p className="text-muted-gray text-sm">Secure payments powered by leading Indian payment gateways</p>
             </div>
           </div>
 
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+          <div className="border-t border-white/10 mt-12 pt-8 text-center text-muted-gray">
             <p>&copy; 2024 Dekho Live. All rights reserved. | Privacy Policy | Terms of Service</p>
           </div>
         </div>
