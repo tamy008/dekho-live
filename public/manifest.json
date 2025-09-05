@@ -1,31 +1,27 @@
 {
-  "name": "Dekho - Discover Amazing Products",
-  "short_name": "Dekho",
-  "description": "Discover amazing products with our innovative platform featuring cutting-edge 3D effects and immersive experiences.",
+  "name": "Dekho Live - India's Premier Live Shopping Platform",
+  "short_name": "Dekho Live",
+  "description": "Join India's most exciting live shopping experience! Discover authentic products, interact with sellers, and shop from home.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0f0f23",
-  "theme_color": "#6366f1",
+  "background_color": "#FF9933",
+  "theme_color": "#FF9933",
   "orientation": "portrait-primary",
   "icons": [
     {
       "src": "/favicon.png",
-      "sizes": "32x32",
-      "type": "image/png"
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/favicon-large.png",
-      "sizes": "180x180",
-      "type": "image/png"
-    },
-    {
-      "src": "/dekho-logo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
   ],
-  "categories": ["shopping", "lifestyle", "productivity"],
-  "lang": "en",
+  "categories": ["shopping", "lifestyle", "entertainment"],
+  "lang": "en-IN",
   "dir": "ltr"
 }

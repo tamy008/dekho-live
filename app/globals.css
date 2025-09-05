@@ -2,9 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Critical CSS - Inline this in production */
 @layer base {
   :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
     --card: 222.2 84% 4.9%;
@@ -12,7 +39,7 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
     --primary: 210 40% 98%;
-    --primary-foreground: 222.2 84% 4.9%;
+    --primary-foreground: 222.2 47.4% 11.2%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
@@ -24,275 +51,134 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
-    --radius: 0.5rem;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
   }
 }
 
-/* Performance-optimized reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
 
-html {
-  font-size: 16px;
-  scroll-behavior: smooth;
+@layer components {
+  .live-badge {
+    @apply bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1;
+  }
+
+  .live-dot {
+    @apply w-2 h-2 bg-white rounded-full animate-pulse;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-saffron via-indian-red to-emerald bg-clip-text text-transparent;
+  }
+
+  .indian-gradient {
+    @apply bg-gradient-to-r from-saffron via-white to-emerald;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:scale-105 hover:shadow-xl;
+  }
+
+  .live-stream-card {
+    @apply bg-white rounded-xl shadow-lg overflow-hidden card-hover;
+  }
+
+  .category-chip {
+    @apply bg-gradient-to-r from-saffron/20 to-emerald/20 text-gray-800 px-3 py-1 rounded-full text-sm font-medium;
+  }
+
+  .price-tag {
+    @apply bg-indian-red text-white px-2 py-1 rounded text-sm font-bold;
+  }
+
+  .seller-badge {
+    @apply bg-emerald text-white px-2 py-1 rounded-full text-xs font-semibold;
+  }
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: #0f0f23;
-  color: #ffffff;
-  line-height: 1.6;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeSpeed;
-}
-
-/* Optimized 3D text effects */
 .text-3d-effect {
-  text-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.15),
-    0 2px 0 rgba(255, 255, 255, 0.1),
-    0 3px 0 rgba(255, 255, 255, 0.05),
-    0 4px 1px rgba(0, 0, 0, 0.08),
-    0 0 12px rgba(99, 102, 241, 0.15),
-    0 2px 6px rgba(0, 0, 0, 0.1);
-  transform: perspective(1200px) rotateX(4deg);
-  transform-style: preserve-3d;
-  position: relative;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* Optimized header logo effects */
 .header-logo-3d {
-  transform: perspective(800px) rotateX(2deg) rotateY(-1deg);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.08));
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+  transition: transform 0.3s ease;
 }
 
 .header-logo-3d:hover {
-  transform: perspective(800px) rotateX(4deg) rotateY(2deg) translateZ(2px);
-  filter: drop-shadow(0 2px 4px rgba(99, 102, 241, 0.15));
-}
-
-/* Enhanced text integration with performance optimization */
-.enhanced-text-integration {
-  position: relative;
-  display: inline-block;
-  transform-style: preserve-3d;
-}
-
-.enhanced-text-integration::before {
-  content: attr(data-text);
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: -1;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(236, 72, 153, 0.2), rgba(6, 182, 212, 0.2));
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: blur(6px);
-  transform: translateZ(-8px) scale(1.02);
-  opacity: 0.8;
-  will-change: transform;
-}
-
-.enhanced-text-integration::after {
-  content: attr(data-text);
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: -2;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1), rgba(6, 182, 212, 0.1));
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: blur(12px);
-  transform: translateZ(-15px) scale(1.05);
-  opacity: 0.4;
-  will-change: transform;
-}
-
-/* Cohesive design elements */
-.cohesive-3d-container {
-  transform-style: preserve-3d;
-  perspective: 1000px;
+  transform: scale(1.1) rotate(5deg);
 }
 
 .cohesive-3d-element {
-  transform: translateZ(0);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform;
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease;
 }
 
 .cohesive-3d-element:hover {
-  transform: translateZ(10px);
+  transform: translateZ(10px) rotateX(5deg) rotateY(5deg);
 }
 
-/* Optimized floating animation */
-.refined-float {
-  animation: refined-float-3d 8s ease-in-out infinite;
-  transform-style: preserve-3d;
-  will-change: transform;
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-@keyframes refined-float-3d {
-  0%,
-  100% {
-    transform: translateY(0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
-  }
-  25% {
-    transform: translateY(-4px) rotateX(1deg) rotateY(1deg) rotateZ(0.2deg);
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.subtle-glow {
+  filter: drop-shadow(0 0 8px rgba(255, 153, 51, 0.3));
+}
+
+.enhanced-text-integration {
+  background: linear-gradient(45deg, #ff9933, #138808, #000080);
+  background-size: 300% 300%;
+  animation: gradient-shift 3s ease infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
   }
   50% {
-    transform: translateY(-2px) rotateX(-0.5deg) rotateY(-0.5deg) rotateZ(-0.1deg);
+    background-position: 100% 50%;
   }
-  75% {
-    transform: translateY(-3px) rotateX(0.5deg) rotateY(0.5deg) rotateZ(0.1deg);
+  100% {
+    background-position: 0% 50%;
   }
 }
 
-/* Depth layers */
-.depth-layer-1 {
-  transform: translateZ(5px);
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out;
 }
 
-.depth-layer-2 {
-  transform: translateZ(10px);
+.animate-slide-up {
+  animation: slideUp 0.8s ease-out;
 }
 
-.depth-layer-3 {
-  transform: translateZ(15px);
-}
-
-/* Optimized subtle glow effect */
-.subtle-glow {
-  filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.3)) drop-shadow(0 0 16px rgba(236, 72, 153, 0.2));
-  transition: filter 0.3s ease;
-  will-change: filter;
-}
-
-.subtle-glow:hover {
-  filter: drop-shadow(0 0 12px rgba(99, 102, 241, 0.4)) drop-shadow(0 0 24px rgba(236, 72, 153, 0.3));
-}
-
-/* Performance optimizations */
-.will-change-transform {
-  will-change: transform;
-}
-
-.will-change-opacity {
-  will-change: opacity;
-}
-
-/* GPU acceleration for key elements */
-.gpu-accelerated {
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000px;
-}
-
-/* Optimize for mobile and low-end devices */
-@media (max-width: 768px), (prefers-reduced-motion: reduce) {
-  .text-3d-effect {
-    transform: none;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  }
-
-  .header-logo-3d {
-    transform: none;
-    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
-  }
-
-  .refined-float {
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-slide-up,
+  .enhanced-text-integration {
     animation: none;
   }
 
-  .enhanced-text-integration::before,
-  .enhanced-text-integration::after {
-    display: none;
-  }
-
-  .cohesive-3d-element {
-    transform: none !important;
-  }
-
-  .subtle-glow {
-    filter: none;
-  }
-}
-
-/* Reduce motion for accessibility */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* Focus styles for accessibility */
-button:focus-visible,
-[role="button"]:focus-visible,
-input:focus-visible,
-textarea:focus-visible {
-  outline: 2px solid #6366f1;
-  outline-offset: 2px;
-}
-
-/* Optimized scrollbar */
-::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 2px;
-}
-
-/* Container queries for responsive design */
-@container (max-width: 768px) {
-  .responsive-text {
-    font-size: clamp(1rem, 4vw, 2rem);
-  }
-}
-
-/* Optimize layout stability */
-.layout-stable {
-  contain: layout style paint;
-}
-
-/* Optimize text rendering */
-.optimize-text {
-  text-rendering: optimizeSpeed;
-  font-display: swap;
-}
-
-/* Print styles */
-@media print {
-  * {
-    background: transparent !important;
-    color: black !important;
-    box-shadow: none !important;
-    text-shadow: none !important;
-  }
-}
-
-/* High DPI display optimizations */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  body {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  .cohesive-3d-element:hover,
+  .hover-lift:hover {
+    transform: none;
   }
 }

@@ -1,508 +1,441 @@
 "use client"
 
-import React, { Suspense, lazy, useState, useEffect, useMemo, useCallback } from "react"
-import {
-  Search,
-  Menu,
-  X,
-  Star,
-  ShoppingCart,
-  Heart,
-  Filter,
-  Grid,
-  List,
-  ChevronDown,
-  ArrowRight,
-  Zap,
-  Shield,
-  Truck,
-  Award,
-} from "lucide-react"
+import type React from "react"
+import { useState, useEffect } from "react"
+import { Play, Heart, ShoppingCart, Users, Star, MapPin, Clock, Zap, TrendingUp, Gift, Sparkles } from "lucide-react"
 
-// Lazy load heavy components for better performance
-const ParticleField = lazy(() => import("../components/particle-field"))
-const CSS3DBackground = lazy(() => import("../components/unique-effects/css-3d-background"))
-const HolographicCards = lazy(() => import("../components/unique-effects/holographic-cards"))
-const NeonTunnel = lazy(() => import("../components/unique-effects/neon-tunnel"))
-const LiquidMetalButton = lazy(() => import("../components/unique-effects/liquid-metal-button"))
-const GlitchText = lazy(() => import("../components/unique-effects/glitch-text"))
-const FloatingUIElements = lazy(() => import("../components/unique-effects/floating-ui-elements"))
-const InteractiveMeshGradient = lazy(() => import("../components/unique-effects/interactive-mesh-gradient"))
-const MorphingBlobCursor = lazy(() => import("../components/unique-effects/morphing-cursor"))
-
-// Performance monitoring hook
-const usePerformanceMonitor = () => {
-  const [isHighPerformance, setIsHighPerformance] = useState(true)
-  const [deviceCapabilities, setDeviceCapabilities] = useState({
-    cores: 1,
-    memory: 1,
-    connection: "slow-2g",
-  })
-
-  useEffect(() => {
-    // Check device capabilities
-    const checkPerformance = () => {
-      const cores = navigator.hardwareConcurrency || 1
-      const memory = (navigator as any).deviceMemory || 1
-      const connection = (navigator as any).connection?.effectiveType || "slow-2g"
-
-      setDeviceCapabilities({ cores, memory, connection })
-
-      // Determine if device can handle high-performance features
-      const isHighPerf = cores >= 4 && memory >= 4 && ["4g", "3g"].includes(connection)
-
-      setIsHighPerformance(isHighPerf)
-    }
-
-    checkPerformance()
-  }, [])
-
-  return { isHighPerformance, deviceCapabilities }
+interface LiveStream {
+  id: string
+  title: string
+  seller: string
+  viewers: number
+  category: string
+  price: string
+  originalPrice?: string
+  location: string
+  rating: number
+  isLive: boolean
+  thumbnail: string
+  discount?: string
 }
 
-// Optimized intersection observer hook
-const useIntersectionObserver = (options = {}) => {
-  const [isIntersecting, setIsIntersecting] = useState(false)
-  const [ref, setRef] = useState<Element | null>(null)
-
-  useEffect(() => {
-    if (!ref) return
-
-    const observer = new IntersectionObserver(([entry]) => setIsIntersecting(entry.isIntersecting), {
-      rootMargin: "50px",
-      ...options,
-    })
-
-    observer.observe(ref)
-    return () => observer.disconnect()
-  }, [ref, options])
-
-  return [setRef, isIntersecting] as const
+interface Category {
+  id: string
+  name: string
+  nameHindi: string
+  icon: string
+  count: number
 }
 
-// Loading skeleton component
-const LoadingSkeleton = ({ className = "" }: { className?: string }) => (
-  <div className={`animate-pulse bg-gray-700 rounded ${className}`} />
-)
+const liveStreams: LiveStream[] = [
+  {
+    id: "1",
+    title: "Banarasi Silk Sarees - Diwali Special Collection",
+    seller: "Priya Textiles",
+    viewers: 1247,
+    category: "Fashion",
+    price: "₹2,999",
+    originalPrice: "₹4,999",
+    location: "Varanasi, UP",
+    rating: 4.8,
+    isLive: true,
+    thumbnail: "/placeholder.svg?height=200&width=300&text=Banarasi+Sarees",
+    discount: "40% OFF",
+  },
+  {
+    id: "2",
+    title: "Latest iPhone 15 Pro Max - Unboxing & Review",
+    seller: "TechGuru Mumbai",
+    viewers: 3421,
+    category: "Electronics",
+    price: "₹1,34,900",
+    location: "Mumbai, MH",
+    rating: 4.9,
+    isLive: true,
+    thumbnail: "/placeholder.svg?height=200&width=300&text=iPhone+15+Pro",
+  },
+  {
+    id: "3",
+    title: "Handcrafted Home Decor - Diwali Diyas & Rangoli",
+    seller: "Artisan Crafts",
+    viewers: 892,
+    category: "Home & Decor",
+    price: "₹599",
+    originalPrice: "₹999",
+    location: "Jaipur, RJ",
+    rating: 4.7,
+    isLive: true,
+    thumbnail: "/placeholder.svg?height=200&width=300&text=Diwali+Decor",
+    discount: "40% OFF",
+  },
+  {
+    id: "4",
+    title: "Organic Beauty Products - Ayurvedic Skincare",
+    seller: "Natural Beauty Co",
+    viewers: 567,
+    category: "Beauty",
+    price: "₹1,299",
+    originalPrice: "₹1,899",
+    location: "Bangalore, KA",
+    rating: 4.6,
+    isLive: true,
+    thumbnail: "/placeholder.svg?height=200&width=300&text=Ayurvedic+Beauty",
+    discount: "32% OFF",
+  },
+  {
+    id: "5",
+    title: "Traditional Jewelry - Gold Plated Kundan Sets",
+    seller: "Royal Jewelers",
+    viewers: 2156,
+    category: "Jewelry",
+    price: "₹3,499",
+    originalPrice: "₹5,999",
+    location: "Delhi, DL",
+    rating: 4.8,
+    isLive: true,
+    thumbnail: "/placeholder.svg?height=200&width=300&text=Kundan+Jewelry",
+    discount: "42% OFF",
+  },
+  {
+    id: "6",
+    title: "Gaming Setup - RGB Mechanical Keyboards",
+    seller: "GameZone India",
+    viewers: 1834,
+    category: "Electronics",
+    price: "₹4,999",
+    originalPrice: "₹7,999",
+    location: "Pune, MH",
+    rating: 4.7,
+    isLive: true,
+    thumbnail: "/placeholder.svg?height=200&width=300&text=Gaming+Setup",
+    discount: "38% OFF",
+  },
+]
 
-// Optimized product card component
-const ProductCard = React.memo(({ product, index }: { product: any; index: number }) => {
-  const [imageLoaded, setImageLoaded] = useState(false)
+const categories: Category[] = [
+  { id: "1", name: "Fashion", nameHindi: "फैशन", icon: "👗", count: 234 },
+  { id: "2", name: "Electronics", nameHindi: "इलेक्ट्रॉनिक्स", icon: "📱", count: 156 },
+  { id: "3", name: "Home & Decor", nameHindi: "घर और सजावट", icon: "🏠", count: 189 },
+  { id: "4", name: "Beauty", nameHindi: "सुंदरता", icon: "💄", count: 98 },
+  { id: "5", name: "Jewelry", nameHindi: "आभूषण", icon: "💍", count: 145 },
+  { id: "6", name: "Sports", nameHindi: "खेल", icon: "⚽", count: 67 },
+]
 
+const LiveStreamCard: React.FC<{ stream: LiveStream }> = ({ stream }) => {
   return (
-    <div className="group relative bg-white/5 backdrop-blur-sm rounded-xl p-4 hover:bg-white/10 transition-all duration-300 hover:scale-105 hover:shadow-2xl border border-white/10">
-      <div className="aspect-square mb-4 overflow-hidden rounded-lg bg-gray-800">
-        {!imageLoaded && <LoadingSkeleton className="w-full h-full" />}
-        <img
-          src={`/product_placeholder.png?height=300&width=300&text=Product ${index + 1}`}
-          alt={product.name}
-          className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
-          onLoad={() => setImageLoaded(true)}
-          loading="lazy"
-        />
-      </div>
-
-      <div className="space-y-2">
-        <h3 className="font-semibold text-white group-hover:text-blue-300 transition-colors">{product.name}</h3>
-        <div className="flex items-center space-x-1">
-          {[...Array(5)].map((_, i) => (
-            <Star
-              key={i}
-              className={`w-4 h-4 ${i < product.rating ? "text-yellow-400 fill-current" : "text-gray-600"}`}
-            />
-          ))}
-          <span className="text-sm text-gray-400 ml-2">({product.reviews})</span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="text-xl font-bold text-white">${product.price}</span>
-          <div className="flex space-x-2">
-            <button className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
-              <Heart className="w-4 h-4 text-white" />
-            </button>
-            <button className="p-2 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors">
-              <ShoppingCart className="w-4 h-4 text-white" />
+    <div className="live-stream-card group">
+      <div className="relative">
+        <img src={stream.thumbnail || "/placeholder.svg"} alt={stream.title} className="w-full h-48 object-cover" />
+        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors">
+          <div className="absolute top-3 left-3">
+            <div className="live-badge">
+              <div className="live-dot"></div>
+              LIVE
+            </div>
+          </div>
+          <div className="absolute top-3 right-3 flex gap-2">
+            {stream.discount && (
+              <span className="bg-indian-red text-white px-2 py-1 rounded text-xs font-bold">{stream.discount}</span>
+            )}
+          </div>
+          <div className="absolute bottom-3 left-3 flex items-center gap-1 text-white text-sm">
+            <Users size={16} />
+            <span>{stream.viewers.toLocaleString()}</span>
+          </div>
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <button className="bg-white/90 hover:bg-white text-gray-900 rounded-full p-3 transition-colors">
+              <Play size={24} fill="currentColor" />
             </button>
           </div>
+        </div>
+      </div>
+
+      <div className="p-4">
+        <div className="flex items-start justify-between mb-2">
+          <h3 className="font-semibold text-gray-900 line-clamp-2 flex-1 mr-2">{stream.title}</h3>
+          <button className="text-gray-400 hover:text-red-500 transition-colors">
+            <Heart size={20} />
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2 mb-2">
+          <div className="seller-badge">✓ Verified</div>
+          <span className="text-sm text-gray-600">{stream.seller}</span>
+        </div>
+
+        <div className="flex items-center gap-1 mb-2">
+          <MapPin size={14} className="text-gray-400" />
+          <span className="text-sm text-gray-600">{stream.location}</span>
+          <div className="flex items-center gap-1 ml-2">
+            <Star size={14} className="text-yellow-400 fill-current" />
+            <span className="text-sm text-gray-600">{stream.rating}</span>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-lg font-bold text-gray-900">{stream.price}</span>
+            {stream.originalPrice && <span className="text-sm text-gray-500 line-through">{stream.originalPrice}</span>}
+          </div>
+          <button className="bg-saffron hover:bg-saffron/90 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2">
+            <ShoppingCart size={16} />
+            Buy Now
+          </button>
         </div>
       </div>
     </div>
   )
-})
+}
 
-ProductCard.displayName = "ProductCard"
+const CategoryCard: React.FC<{ category: Category }> = ({ category }) => {
+  return (
+    <div className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow cursor-pointer group">
+      <div className="text-center">
+        <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">{category.icon}</div>
+        <h3 className="font-semibold text-gray-900 mb-1">{category.name}</h3>
+        <p className="text-sm text-gray-600 mb-2">{category.nameHindi}</p>
+        <span className="text-xs text-gray-500">{category.count} live shows</span>
+      </div>
+    </div>
+  )
+}
 
 export default function HomePage() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
-  const [sortBy, setSortBy] = useState("featured")
-  const [isFilterOpen, setIsFilterOpen] = useState(false)
+  const [currentTime, setCurrentTime] = useState(new Date())
 
-  const { isHighPerformance } = usePerformanceMonitor()
-  const [heroRef, isHeroVisible] = useIntersectionObserver()
-  const [featuresRef, isFeaturesVisible] = useIntersectionObserver()
-  const [productsRef, isProductsVisible] = useIntersectionObserver()
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date())
+    }, 1000)
 
-  // Memoized sample data
-  const sampleProducts = useMemo(
-    () =>
-      Array.from({ length: 12 }, (_, i) => ({
-        id: i + 1,
-        name: `Amazing Product ${i + 1}`,
-        price: Math.floor(Math.random() * 500) + 50,
-        rating: Math.floor(Math.random() * 2) + 4,
-        reviews: Math.floor(Math.random() * 1000) + 100,
-        category: ["Electronics", "Fashion", "Home", "Sports"][Math.floor(Math.random() * 4)],
-      })),
-    [],
-  )
-
-  // Optimized search handler
-  const handleSearch = useCallback(
-    (e: React.FormEvent) => {
-      e.preventDefault()
-      console.log("Searching for:", searchQuery)
-    },
-    [searchQuery],
-  )
-
-  const toggleMenu = useCallback(() => setIsMenuOpen((prev) => !prev), [])
-  const toggleFilter = useCallback(() => setIsFilterOpen((prev) => !prev), [])
+    return () => clearInterval(timer)
+  }, [])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 text-white overflow-hidden">
-      {/* Background Effects - Only load on high-performance devices */}
-      {isHighPerformance && (
-        <Suspense fallback={null}>
-          <div className="fixed inset-0 z-0">
-            <ParticleField />
-            <CSS3DBackground />
-          </div>
-        </Suspense>
-      )}
-
-      {/* Navigation */}
-      <nav className="relative z-50 bg-black/20 backdrop-blur-md border-b border-white/10">
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <div className="flex items-center space-x-4">
-              <img src="/dekho-logo.png" alt="Dekho" className="h-8 w-auto header-logo-3d" loading="eager" />
-              <span className="text-xl font-bold text-3d-effect">Dekho</span>
-            </div>
-
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8">
-              <a href="#" className="hover:text-blue-300 transition-colors">
-                Home
-              </a>
-              <a href="#" className="hover:text-blue-300 transition-colors">
-                Products
-              </a>
-              <a href="#" className="hover:text-blue-300 transition-colors">
-                Categories
-              </a>
-              <a href="#" className="hover:text-blue-300 transition-colors">
-                About
-              </a>
-              <a href="#" className="hover:text-blue-300 transition-colors">
-                Contact
-              </a>
-            </div>
-
-            {/* Search Bar */}
-            <div className="hidden md:flex items-center flex-1 max-w-md mx-8">
-              <form onSubmit={handleSearch} className="w-full">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <input
-                    type="text"
-                    placeholder="Search products..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
-                  />
-                </div>
-              </form>
-            </div>
-
-            {/* Mobile menu button */}
-            <button onClick={toggleMenu} className="md:hidden p-2 rounded-md hover:bg-white/10 transition-colors">
-              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="md:hidden bg-black/30 backdrop-blur-md border-t border-white/10">
-            <div className="px-4 py-4 space-y-4">
-              <form onSubmit={handleSearch} className="w-full">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <input
-                    type="text"
-                    placeholder="Search products..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
-                  />
-                </div>
-              </form>
-              <div className="space-y-2">
-                <a href="#" className="block py-2 hover:text-blue-300 transition-colors">
-                  Home
-                </a>
-                <a href="#" className="block py-2 hover:text-blue-300 transition-colors">
-                  Products
-                </a>
-                <a href="#" className="block py-2 hover:text-blue-300 transition-colors">
-                  Categories
-                </a>
-                <a href="#" className="block py-2 hover:text-blue-300 transition-colors">
-                  About
-                </a>
-                <a href="#" className="block py-2 hover:text-blue-300 transition-colors">
-                  Contact
-                </a>
+            <div className="flex items-center gap-4">
+              <div className="header-logo-3d">
+                <img src="/dekho-logo.png" alt="Dekho Live" className="h-8 w-auto" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold gradient-text">Dekho Live</h1>
+                <p className="text-xs text-gray-600">देखो लाइव</p>
               </div>
             </div>
+
+            <div className="flex items-center gap-4">
+              <div className="hidden md:flex items-center gap-2 text-sm text-gray-600">
+                <Clock size={16} />
+                <span>{currentTime.toLocaleTimeString("en-IN")}</span>
+              </div>
+              <button className="bg-emerald hover:bg-emerald/90 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                Start Selling
+              </button>
+            </div>
           </div>
-        )}
-      </nav>
+        </div>
+      </header>
 
       {/* Hero Section */}
-      <section ref={heroRef} className="relative z-10 pt-20 pb-32 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto text-center">
-          <div
-            className={`transition-all duration-1000 ${isHeroVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
-          >
-            {isHighPerformance ? (
-              <Suspense
-                fallback={
-                  <h1 className="text-5xl md:text-7xl font-bold mb-6 text-3d-effect">Discover Amazing Products</h1>
-                }
-              >
-                <GlitchText text="Discover Amazing Products" className="text-5xl md:text-7xl font-bold mb-6" />
-              </Suspense>
-            ) : (
-              <h1 className="text-5xl md:text-7xl font-bold mb-6 text-3d-effect">Discover Amazing Products</h1>
-            )}
-
-            <p className="text-xl md:text-2xl mb-8 text-gray-300 max-w-3xl mx-auto">
-              Experience the future of shopping with our cutting-edge platform featuring immersive 3D effects and
-              seamless interactions.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              {isHighPerformance ? (
-                <Suspense
-                  fallback={
-                    <button className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold text-lg transition-all duration-300 hover:scale-105">
-                      Start Exploring
-                    </button>
-                  }
-                >
-                  <LiquidMetalButton>Start Exploring</LiquidMetalButton>
-                </Suspense>
-              ) : (
-                <button className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold text-lg transition-all duration-300 hover:scale-105">
-                  Start Exploring
-                </button>
-              )}
-
-              <button className="px-8 py-4 border border-white/30 hover:bg-white/10 rounded-lg font-semibold text-lg transition-all duration-300 hover:scale-105">
-                Learn More
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Floating UI Elements */}
-        {isHighPerformance && (
-          <Suspense fallback={null}>
-            <FloatingUIElements />
-          </Suspense>
-        )}
-      </section>
-
-      {/* Features Section */}
-      <section ref={featuresRef} className="relative z-10 py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div
-            className={`text-center mb-16 transition-all duration-1000 ${isFeaturesVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
-          >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-3d-effect">Why Choose Dekho?</h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Experience shopping like never before with our innovative features and cutting-edge technology.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { icon: Zap, title: "Lightning Fast", description: "Optimized performance for seamless browsing" },
-              { icon: Shield, title: "Secure Shopping", description: "Advanced security for safe transactions" },
-              { icon: Truck, title: "Fast Delivery", description: "Quick and reliable shipping worldwide" },
-              { icon: Award, title: "Premium Quality", description: "Curated selection of top-quality products" },
-            ].map((feature, index) => (
-              <div
-                key={index}
-                className={`group bg-white/5 backdrop-blur-sm rounded-xl p-6 hover:bg-white/10 transition-all duration-500 hover:scale-105 border border-white/10 ${
-                  isFeaturesVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-                }`}
-                style={{ transitionDelay: `${index * 100}ms` }}
-              >
-                <feature.icon className="w-12 h-12 text-blue-400 mb-4 group-hover:scale-110 transition-transform duration-300" />
-                <h3 className="text-xl font-semibold mb-2 text-white">{feature.title}</h3>
-                <p className="text-gray-300">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Interactive Mesh Gradient */}
-        {isHighPerformance && (
-          <Suspense fallback={null}>
-            <InteractiveMeshGradient />
-          </Suspense>
-        )}
-      </section>
-
-      {/* Products Section */}
-      <section ref={productsRef} className="relative z-10 py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Section Header */}
-          <div
-            className={`flex flex-col md:flex-row justify-between items-start md:items-center mb-12 transition-all duration-1000 ${isProductsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
-          >
-            <div>
-              <h2 className="text-4xl md:text-5xl font-bold mb-4 text-3d-effect">Featured Products</h2>
-              <p className="text-xl text-gray-300">Discover our handpicked selection of amazing products</p>
-            </div>
-
-            {/* Controls */}
-            <div className="flex items-center space-x-4 mt-6 md:mt-0">
-              <div className="flex items-center space-x-2 bg-white/10 rounded-lg p-1">
-                <button
-                  onClick={() => setViewMode("grid")}
-                  className={`p-2 rounded ${viewMode === "grid" ? "bg-blue-600" : "hover:bg-white/10"} transition-colors`}
-                >
-                  <Grid className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setViewMode("list")}
-                  className={`p-2 rounded ${viewMode === "list" ? "bg-blue-600" : "hover:bg-white/10"} transition-colors`}
-                >
-                  <List className="w-4 h-4" />
-                </button>
-              </div>
-
-              <div className="relative">
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="appearance-none bg-white/10 border border-white/20 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="featured">Featured</option>
-                  <option value="price-low">Price: Low to High</option>
-                  <option value="price-high">Price: High to Low</option>
-                  <option value="rating">Highest Rated</option>
-                </select>
-                <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 pointer-events-none" />
-              </div>
-
-              <button
-                onClick={toggleFilter}
-                className="flex items-center space-x-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg px-4 py-2 transition-colors"
-              >
-                <Filter className="w-4 h-4" />
-                <span>Filter</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Products Grid */}
-          <div
-            className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 transition-all duration-1000 ${isProductsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
-          >
-            {sampleProducts.map((product, index) => (
-              <ProductCard key={product.id} product={product} index={index} />
-            ))}
-          </div>
-
-          {/* Load More Button */}
-          <div className="text-center mt-12">
-            <button className="inline-flex items-center space-x-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-lg font-semibold text-lg transition-all duration-300 hover:scale-105">
-              <span>Load More Products</span>
-              <ArrowRight className="w-5 h-5" />
+      <section className="indian-gradient py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl md:text-6xl font-bold text-white mb-4 text-3d-effect">
+            India's #1 Live Shopping Platform
+          </h2>
+          <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+            Watch, Shop, and Connect with authentic sellers across India.
+            <span className="block mt-2 font-medium">भारत का सबसे बड़ा लाइव शॉपिंग प्लेटफॉर्म</span>
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <button className="bg-white text-gray-900 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors flex items-center gap-2">
+              <Play size={20} fill="currentColor" />
+              Watch Live Shows
+            </button>
+            <button className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-gray-900 transition-colors">
+              Browse Categories
             </button>
           </div>
         </div>
-
-        {/* Holographic Cards Effect */}
-        {isHighPerformance && (
-          <Suspense fallback={null}>
-            <HolographicCards />
-          </Suspense>
-        )}
       </section>
 
-      {/* Neon Tunnel Effect */}
-      {isHighPerformance && (
-        <Suspense fallback={null}>
-          <NeonTunnel />
-        </Suspense>
-      )}
-
-      {/* Custom Cursor */}
-      {isHighPerformance && (
-        <Suspense fallback={null}>
-          <MorphingBlobCursor />
-        </Suspense>
-      )}
-
-      {/* Filter Sidebar */}
-      {isFilterOpen && (
-        <div className="fixed inset-0 z-50 flex">
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={toggleFilter} />
-          <div className="relative ml-auto w-80 bg-gray-900/95 backdrop-blur-md h-full overflow-y-auto border-l border-white/10">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-semibold">Filters</h3>
-                <button onClick={toggleFilter} className="p-2 hover:bg-white/10 rounded-lg transition-colors">
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Filter content would go here */}
-              <div className="space-y-6">
-                <div>
-                  <h4 className="font-medium mb-3">Category</h4>
-                  <div className="space-y-2">
-                    {["Electronics", "Fashion", "Home", "Sports"].map((category) => (
-                      <label key={category} className="flex items-center space-x-2">
-                        <input type="checkbox" className="rounded border-gray-600 bg-gray-700" />
-                        <span>{category}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="font-medium mb-3">Price Range</h4>
-                  <div className="space-y-2">
-                    <input type="range" min="0" max="1000" className="w-full" />
-                    <div className="flex justify-between text-sm text-gray-400">
-                      <span>$0</span>
-                      <span>$1000+</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+      {/* Stats Section */}
+      <section className="py-8 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div className="cohesive-3d-element">
+              <div className="text-3xl font-bold text-saffron mb-2">50K+</div>
+              <div className="text-sm text-gray-600">Live Sellers</div>
+            </div>
+            <div className="cohesive-3d-element">
+              <div className="text-3xl font-bold text-emerald mb-2">2M+</div>
+              <div className="text-sm text-gray-600">Happy Customers</div>
+            </div>
+            <div className="cohesive-3d-element">
+              <div className="text-3xl font-bold text-indian-red mb-2">100+</div>
+              <div className="text-sm text-gray-600">Cities Covered</div>
+            </div>
+            <div className="cohesive-3d-element">
+              <div className="text-3xl font-bold text-navy mb-2">24/7</div>
+              <div className="text-sm text-gray-600">Live Shows</div>
             </div>
           </div>
         </div>
-      )}
+      </section>
+
+      {/* Categories Section */}
+      <section className="py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Shop by Categories</h2>
+            <p className="text-gray-600">श्रेणियों के अनुसार खरीदारी करें</p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {categories.map((category) => (
+              <CategoryCard key={category.id} category={category} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Live Shows Section */}
+      <section className="py-12 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">Live Shows Now</h2>
+              <p className="text-gray-600 flex items-center gap-2">
+                <Zap className="text-red-500" size={16} />
+                {liveStreams.length} sellers are live right now
+              </p>
+            </div>
+            <button className="text-saffron hover:text-saffron/80 font-medium flex items-center gap-2">
+              View All
+              <TrendingUp size={16} />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {liveStreams.map((stream) => (
+              <LiveStreamCard key={stream.id} stream={stream} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Special Offers Section */}
+      <section className="py-12 bg-gradient-to-r from-saffron/10 via-white to-emerald/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-2">
+              <Gift className="text-indian-red" />
+              Diwali Special Offers
+              <Sparkles className="text-turmeric" />
+            </h2>
+            <p className="text-gray-600">दिवाली के विशेष ऑफर्स</p>
+          </div>
+
+          <div className="bg-white rounded-2xl p-8 shadow-xl text-center">
+            <div className="text-6xl mb-4">🪔</div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">Festival Sale Live Now!</h3>
+            <p className="text-gray-600 mb-6">Up to 70% off on traditional wear, home decor, and jewelry</p>
+            <button className="bg-gradient-to-r from-saffron to-indian-red text-white px-8 py-3 rounded-lg font-semibold hover:shadow-lg transition-shadow">
+              Shop Festival Collection
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <img src="/dekho-logo.png" alt="Dekho Live" className="h-8 w-auto" />
+                <span className="text-xl font-bold">Dekho Live</span>
+              </div>
+              <p className="text-gray-400 mb-4">
+                India's premier live shopping platform connecting authentic sellers with customers nationwide.
+              </p>
+              <div className="flex gap-4">
+                <span className="text-2xl">🇮🇳</span>
+                <span className="text-sm text-gray-400">Made with ❤️ in India</span>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-4">Categories</h4>
+              <ul className="space-y-2 text-gray-400">
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Fashion & Clothing
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Electronics
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Home & Decor
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Beauty & Personal Care
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-4">Support</h4>
+              <ul className="space-y-2 text-gray-400">
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Help Center
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Seller Support
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Shipping Info
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Returns & Refunds
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-4">Payment Methods</h4>
+              <div className="grid grid-cols-3 gap-2 mb-4">
+                <div className="bg-gray-800 rounded p-2 text-center text-xs">UPI</div>
+                <div className="bg-gray-800 rounded p-2 text-center text-xs">Card</div>
+                <div className="bg-gray-800 rounded p-2 text-center text-xs">Wallet</div>
+              </div>
+              <p className="text-gray-400 text-sm">Secure payments powered by leading Indian payment gateways</p>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+            <p>&copy; 2024 Dekho Live. All rights reserved. | Privacy Policy | Terms of Service</p>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }

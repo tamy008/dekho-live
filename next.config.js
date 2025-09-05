@@ -4,7 +4,7 @@ const nextConfig = {
 
   // Performance optimizations
   experimental: {
-    optimizeCss: false, // Disable to prevent build issues
+    optimizeCss: true, // Updated to enable CSS optimization
     optimizePackageImports: ["lucide-react"],
   },
 
@@ -16,6 +16,14 @@ const nextConfig = {
     minimumCacheTTL: 31536000,
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    domains: ["images.unsplash.com", "via.placeholder.com"], // Updated domains
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+    ],
+    unoptimized: true,
   },
 
   // Compression
