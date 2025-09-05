@@ -31,9 +31,8 @@
   }
 
   .glass-effect {
-    @apply bg-dark-gray backdrop-blur-md border border-white;
+    @apply backdrop-blur-md;
     background-color: rgba(42, 42, 42, 0.3);
-    border-color: rgba(255, 255, 255, 0.05);
   }
 
   .live-stream-card {

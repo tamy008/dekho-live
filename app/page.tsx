@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import {
   Play,
   Heart,
@@ -9,7 +9,6 @@ import {
   Users,
   Star,
   MapPin,
-  Clock,
   Zap,
   TrendingUp,
   Gift,
@@ -253,17 +252,8 @@ const CategoryCard: React.FC<{ category: Category }> = ({ category }) => {
 }
 
 export default function HomePage() {
-  const [currentTime, setCurrentTime] = useState(new Date())
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date())
-    }, 1000)
-
-    return () => clearInterval(timer)
-  }, [])
 
   return (
     <div className="min-h-screen bg-deep-black">
@@ -313,10 +303,6 @@ export default function HomePage() {
                   className="subtle-input pl-10 w-64"
                 />
               </div>
-              <div className="flex items-center gap-2 text-sm text-muted-gray">
-                <Clock size={16} />
-                <span>{currentTime.toLocaleTimeString("en-IN")}</span>
-              </div>
               <button className="relative p-2 text-muted-gray hover:text-electric-pink transition-colors">
                 <Bell size={20} />
                 <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
@@ -331,7 +317,7 @@ export default function HomePage() {
         </div>
 
         {isMenuOpen && (
-          <div className="md:hidden glass-effect border-t border-white/5">
+          <div className="md:hidden glass-effect">
             <div className="px-4 py-4 space-y-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-gray" size={16} />
@@ -458,7 +444,7 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gradient-to-br from-dark-gray/60 to-medium-gray/40 py-16 border-t border-white/5">
+      <footer className="bg-gradient-to-br from-dark-gray/60 to-medium-gray/40 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
@@ -538,7 +524,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="border-t border-white/5 mt-12 pt-8 text-center text-muted-gray">
+          <div className="mt-12 pt-8 text-center text-muted-gray">
             <p>&copy; 2024 Dekho Live. All rights reserved. | Privacy Policy | Terms of Service</p>
           </div>
         </div>
