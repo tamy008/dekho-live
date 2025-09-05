@@ -177,7 +177,7 @@ const LiveStreamCard: React.FC<{ stream: LiveStream }> = ({ stream }) => {
           onError={() => setImageError(true)}
           loading="lazy"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent">
           <div className="absolute top-3 left-3">
             <div className="live-badge">
               <div className="live-dot"></div>
@@ -185,18 +185,14 @@ const LiveStreamCard: React.FC<{ stream: LiveStream }> = ({ stream }) => {
             </div>
           </div>
           <div className="absolute top-3 right-3 flex gap-2">
-            {stream.discount && (
-              <span className="bg-secondary-gradient text-white px-2 py-1 rounded-lg text-xs font-bold shadow-neon">
-                {stream.discount}
-              </span>
-            )}
+            {stream.discount && <span className="discount-badge">{stream.discount}</span>}
           </div>
-          <div className="absolute bottom-3 left-3 flex items-center gap-1 text-white text-sm bg-black/60 px-3 py-1 rounded-full backdrop-blur-sm">
+          <div className="absolute bottom-3 left-3 flex items-center gap-1 text-white text-sm bg-black/50 px-3 py-1 rounded-full backdrop-blur-sm">
             <Users size={16} />
-            <span className="glow-text">{stream.viewers.toLocaleString()}</span>
+            <span>{stream.viewers.toLocaleString()}</span>
           </div>
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-            <button className="neon-button rounded-full p-4">
+            <button className="primary-button rounded-full p-4">
               <Play size={24} fill="currentColor" />
             </button>
           </div>
@@ -206,7 +202,7 @@ const LiveStreamCard: React.FC<{ stream: LiveStream }> = ({ stream }) => {
       <div className="p-4">
         <div className="flex items-start justify-between mb-3">
           <h3 className="font-semibold text-white line-clamp-2 flex-1 mr-2">{stream.title}</h3>
-          <button className="text-muted-gray hover:text-electric-pink transition-colors">
+          <button className="text-muted-gray hover:text-red-400 transition-colors">
             <Heart size={20} />
           </button>
         </div>
@@ -220,14 +216,14 @@ const LiveStreamCard: React.FC<{ stream: LiveStream }> = ({ stream }) => {
           <MapPin size={14} className="text-muted-gray" />
           <span className="text-sm text-muted-gray">{stream.location}</span>
           <div className="flex items-center gap-1 ml-2">
-            <Star size={14} className="text-neon-green fill-current" />
+            <Star size={14} className="text-yellow-400 fill-current" />
             <span className="text-sm text-muted-gray">{stream.rating}</span>
           </div>
         </div>
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-lg font-bold neon-text">{stream.price}</span>
+            <span className="text-lg font-bold subtle-neon-text">{stream.price}</span>
             {stream.originalPrice && (
               <span className="text-sm text-muted-gray line-through">{stream.originalPrice}</span>
             )}
@@ -246,7 +242,9 @@ const CategoryCard: React.FC<{ category: Category }> = ({ category }) => {
   return (
     <div className="category-card group">
       <div className="text-center">
-        <div className="text-4xl mb-3 group-hover:scale-110 transition-transform floating-element">{category.icon}</div>
+        <div className="text-4xl mb-3 group-hover:scale-105 transition-transform animate-subtle-float">
+          {category.icon}
+        </div>
         <h3 className="font-semibold text-white mb-1">{category.name}</h3>
         <span className="text-xs text-muted-gray">{category.count} live shows</span>
       </div>
@@ -269,6 +267,27 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-deep-black">
+      {/* Subtle background effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div
+          className="absolute w-96 h-96 rounded-full blur-3xl animate-subtle-float"
+          style={{
+            background: "radial-gradient(circle, rgba(255, 28, 247, 0.05) 0%, transparent 70%)",
+            top: "25%",
+            left: "25%",
+          }}
+        />
+        <div
+          className="absolute w-64 h-64 rounded-full blur-2xl animate-subtle-float"
+          style={{
+            background: "radial-gradient(circle, rgba(0, 240, 255, 0.05) 0%, transparent 70%)",
+            bottom: "25%",
+            right: "25%",
+            animationDelay: "2s",
+          }}
+        />
+      </div>
+
       {/* Header */}
       <header className="glass-effect sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -278,8 +297,8 @@ export default function HomePage() {
                 <img src="/dekho-logo.png" alt="Dekho Live" className="h-8 w-auto" />
               </div>
               <div>
-                <h1 className="text-xl font-bold neon-text">Dekho Live</h1>
-                <p className="text-xs text-muted-gray">Future of Shopping</p>
+                <h1 className="text-xl font-bold subtle-neon-text">Dekho Live</h1>
+                <p className="text-xs text-muted-gray">Live Shopping Platform</p>
               </div>
             </div>
 
@@ -291,7 +310,7 @@ export default function HomePage() {
                   placeholder="Search live shows..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="neon-input pl-10 w-64"
+                  className="subtle-input pl-10 w-64"
                 />
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-gray">
@@ -300,7 +319,7 @@ export default function HomePage() {
               </div>
               <button className="relative p-2 text-muted-gray hover:text-electric-pink transition-colors">
                 <Bell size={20} />
-                <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary-gradient rounded-full animate-pulse-neon"></span>
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
               </button>
               <button className="secondary-button">Start Selling</button>
             </div>
@@ -312,11 +331,11 @@ export default function HomePage() {
         </div>
 
         {isMenuOpen && (
-          <div className="md:hidden glass-effect border-t border-white/10">
+          <div className="md:hidden glass-effect border-t border-white/5">
             <div className="px-4 py-4 space-y-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-gray" size={16} />
-                <input type="text" placeholder="Search live shows..." className="neon-input pl-10 w-full" />
+                <input type="text" placeholder="Search live shows..." className="subtle-input pl-10 w-full" />
               </div>
               <button className="w-full secondary-button">Start Selling</button>
             </div>
@@ -326,25 +345,18 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-electric-pink/10 via-transparent to-neon-cyan/10"></div>
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-electric-pink/20 rounded-full blur-3xl animate-float"></div>
-        <div
-          className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-neon-cyan/20 rounded-full blur-2xl animate-float"
-          style={{ animationDelay: "1s" }}
-        ></div>
-
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-5xl md:text-7xl font-bold mb-6 animate-fade-in">
-            <span className="neon-text glow-text">India's Most</span>
+            <span className="subtle-neon-text subtle-glow">India's Premier</span>
             <br />
-            <span className="bg-secondary-gradient bg-clip-text text-transparent">Vibrant Live Shopping</span>
+            <span className="text-white">Live Shopping Platform</span>
           </h2>
           <p className="text-xl text-muted-gray mb-8 max-w-2xl mx-auto animate-slide-up">
-            Experience the future of commerce with real-time shopping, authentic sellers, and electrifying deals.
-            <span className="block mt-2 text-neon-green font-medium">Join the revolution today!</span>
+            Watch, shop, and connect with authentic sellers across India in real-time.
+            <span className="block mt-2 neon-green-text font-medium">Experience shopping reimagined.</span>
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-slide-up">
-            <button className="neon-button flex items-center gap-2 text-lg px-8 py-4">
+            <button className="primary-button flex items-center gap-2 text-lg px-8 py-4">
               <Play size={24} fill="currentColor" />
               Watch Live Shows
             </button>
@@ -358,19 +370,19 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <div className="stats-card">
-              <div className="text-3xl font-bold neon-text mb-2">50K+</div>
+              <div className="text-3xl font-bold subtle-neon-text mb-2">50K+</div>
               <div className="text-sm text-muted-gray">Live Sellers</div>
             </div>
             <div className="stats-card">
-              <div className="text-3xl font-bold bg-secondary-gradient bg-clip-text text-transparent mb-2">2M+</div>
+              <div className="text-3xl font-bold neon-cyan-text mb-2">2M+</div>
               <div className="text-sm text-muted-gray">Happy Customers</div>
             </div>
             <div className="stats-card">
-              <div className="text-3xl font-bold text-neon-green mb-2">100+</div>
+              <div className="text-3xl font-bold neon-green-text mb-2">100+</div>
               <div className="text-sm text-muted-gray">Cities Covered</div>
             </div>
             <div className="stats-card">
-              <div className="text-3xl font-bold bg-accent-gradient bg-clip-text text-transparent mb-2">24/7</div>
+              <div className="text-3xl font-bold hot-pink-text mb-2">24/7</div>
               <div className="text-sm text-muted-gray">Live Shows</div>
             </div>
           </div>
@@ -382,7 +394,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold mb-4">
-              <span className="neon-text">Shop by Categories</span>
+              <span className="subtle-neon-text">Shop by Categories</span>
             </h2>
             <p className="text-muted-gray text-lg">Discover amazing products across all categories</p>
           </div>
@@ -401,14 +413,14 @@ export default function HomePage() {
           <div className="flex items-center justify-between mb-12">
             <div>
               <h2 className="text-4xl font-bold mb-2">
-                <span className="neon-text glow-text">Live Shows Now</span>
+                <span className="subtle-neon-text subtle-glow">Live Shows Now</span>
               </h2>
               <p className="text-muted-gray flex items-center gap-2 text-lg">
-                <Zap className="text-electric-pink animate-pulse-neon" size={20} />
+                <Zap className="text-red-500" size={20} />
                 {liveStreams.length} sellers broadcasting live
               </p>
             </div>
-            <button className="neon-button flex items-center gap-2">
+            <button className="primary-button flex items-center gap-2">
               View All
               <TrendingUp size={16} />
             </button>
@@ -427,35 +439,35 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold mb-4 flex items-center justify-center gap-4">
-              <Gift className="text-electric-pink animate-bounce-gentle" />
-              <span className="neon-text">Festival Mega Sale</span>
-              <Sparkles className="text-neon-green animate-bounce-gentle" />
+              <Gift className="text-orange-500" />
+              <span className="subtle-neon-text">Festival Sale</span>
+              <Sparkles className="text-yellow-400" />
             </h2>
-            <p className="text-muted-gray text-lg">Electrifying deals that'll blow your mind!</p>
+            <p className="text-muted-gray text-lg">Limited time offers and exclusive discounts</p>
           </div>
 
-          <div className="glass-effect rounded-3xl p-12 text-center neon-border animate-glow">
-            <div className="text-8xl mb-6 floating-element">🎆</div>
+          <div className="subtle-border rounded-3xl p-12 text-center">
+            <div className="text-8xl mb-6 animate-subtle-float">🎉</div>
             <h3 className="text-3xl font-bold mb-4">
-              <span className="bg-primary-gradient bg-clip-text text-transparent">Sale Live Now!</span>
+              <span className="subtle-neon-text">Sale Live Now!</span>
             </h3>
             <p className="text-muted-gray mb-8 text-lg">Up to 70% off on fashion, electronics, home decor, and more</p>
-            <button className="neon-button text-xl px-12 py-4">Shop Festival Collection</button>
+            <button className="primary-button text-xl px-12 py-4">Shop Festival Collection</button>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-dark-gradient py-16 border-t border-white/10">
+      <footer className="bg-gradient-to-br from-dark-gray/60 to-medium-gray/40 py-16 border-t border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-6">
                 <img src="/dekho-logo.png" alt="Dekho Live" className="h-8 w-auto header-logo" />
-                <span className="text-xl font-bold neon-text">Dekho Live</span>
+                <span className="text-xl font-bold subtle-neon-text">Dekho Live</span>
               </div>
               <p className="text-muted-gray mb-6">
-                India's most vibrant live shopping platform connecting authentic sellers with customers nationwide.
+                India's premier live shopping platform connecting authentic sellers with customers nationwide.
               </p>
               <div className="flex gap-4">
                 <span className="text-2xl">🇮🇳</span>
@@ -464,25 +476,25 @@ export default function HomePage() {
             </div>
 
             <div>
-              <h4 className="font-semibold mb-6 text-neon-green">Categories</h4>
+              <h4 className="font-semibold mb-6 neon-green-text">Categories</h4>
               <ul className="space-y-3 text-muted-gray">
                 <li>
-                  <a href="#" className="hover:text-electric-pink transition-colors">
+                  <a href="#" className="hover:text-white transition-colors">
                     Fashion & Clothing
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-electric-pink transition-colors">
+                  <a href="#" className="hover:text-white transition-colors">
                     Electronics
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-electric-pink transition-colors">
+                  <a href="#" className="hover:text-white transition-colors">
                     Home & Decor
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-electric-pink transition-colors">
+                  <a href="#" className="hover:text-white transition-colors">
                     Beauty & Personal Care
                   </a>
                 </li>
@@ -490,25 +502,25 @@ export default function HomePage() {
             </div>
 
             <div>
-              <h4 className="font-semibold mb-6 text-neon-cyan">Support</h4>
+              <h4 className="font-semibold mb-6 neon-cyan-text">Support</h4>
               <ul className="space-y-3 text-muted-gray">
                 <li>
-                  <a href="#" className="hover:text-neon-cyan transition-colors">
+                  <a href="#" className="hover:text-white transition-colors">
                     Help Center
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-neon-cyan transition-colors">
+                  <a href="#" className="hover:text-white transition-colors">
                     Seller Support
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-neon-cyan transition-colors">
+                  <a href="#" className="hover:text-white transition-colors">
                     Shipping Info
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-neon-cyan transition-colors">
+                  <a href="#" className="hover:text-white transition-colors">
                     Returns & Refunds
                   </a>
                 </li>
@@ -516,19 +528,17 @@ export default function HomePage() {
             </div>
 
             <div>
-              <h4 className="font-semibold mb-6 bg-secondary-gradient bg-clip-text text-transparent">
-                Payment Methods
-              </h4>
+              <h4 className="font-semibold mb-6 hot-pink-text">Payment Methods</h4>
               <div className="grid grid-cols-3 gap-2 mb-6">
-                <div className="glass-effect rounded-lg p-3 text-center text-xs font-bold neon-border">UPI</div>
-                <div className="glass-effect rounded-lg p-3 text-center text-xs font-bold neon-border">Card</div>
-                <div className="glass-effect rounded-lg p-3 text-center text-xs font-bold neon-border">Wallet</div>
+                <div className="subtle-border rounded-lg p-3 text-center text-xs font-semibold">UPI</div>
+                <div className="subtle-border rounded-lg p-3 text-center text-xs font-semibold">Card</div>
+                <div className="subtle-border rounded-lg p-3 text-center text-xs font-semibold">Wallet</div>
               </div>
               <p className="text-muted-gray text-sm">Secure payments powered by leading Indian payment gateways</p>
             </div>
           </div>
 
-          <div className="border-t border-white/10 mt-12 pt-8 text-center text-muted-gray">
+          <div className="border-t border-white/5 mt-12 pt-8 text-center text-muted-gray">
             <p>&copy; 2024 Dekho Live. All rights reserved. | Privacy Policy | Terms of Service</p>
           </div>
         </div>

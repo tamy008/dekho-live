@@ -18,98 +18,115 @@
 }
 
 @layer components {
-  .neon-text {
-    @apply bg-primary-gradient bg-clip-text text-transparent;
-    text-shadow: 0 0 20px rgba(255, 28, 247, 0.5);
+  .subtle-neon-text {
+    background: linear-gradient(135deg, rgba(255, 28, 247, 0.8), rgba(0, 240, 255, 0.8));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
-  .neon-border {
-    border: 1px solid transparent;
-    background: linear-gradient(#1a1a1a, #1a1a1a) padding-box, linear-gradient(135deg, #ff1cf7, #00f0ff) border-box;
+  .subtle-border {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.8), rgba(42, 42, 42, 0.6));
   }
 
   .glass-effect {
-    @apply bg-dark-gray/50 backdrop-blur-xl border border-white/10;
+    @apply bg-dark-gray backdrop-blur-md border border-white;
+    background-color: rgba(42, 42, 42, 0.3);
+    border-color: rgba(255, 255, 255, 0.05);
   }
 
   .live-stream-card {
-    @apply bg-card-gradient rounded-2xl shadow-xl hover:shadow-neon transition-all duration-300 overflow-hidden cursor-pointer border border-white/10;
+    background: linear-gradient(135deg, rgba(42, 42, 42, 0.6), rgba(58, 58, 58, 0.4));
+    @apply rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer border;
+    border-color: rgba(255, 255, 255, 0.05);
   }
 
   .live-stream-card:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 40px rgba(255, 28, 247, 0.3);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 28, 247, 0.1);
+    border-color: rgba(255, 28, 247, 0.2);
   }
 
   .live-badge {
-    @apply bg-primary-gradient text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-2;
-    box-shadow: 0 0 15px rgba(255, 28, 247, 0.6);
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    @apply text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-2;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
   }
 
   .live-dot {
-    @apply w-2 h-2 bg-white rounded-full animate-pulse-neon;
+    @apply w-2 h-2 bg-white rounded-full animate-pulse;
   }
 
   .seller-badge {
-    @apply bg-accent-gradient text-deep-black px-3 py-1 rounded-full text-xs font-bold;
-    box-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+    background: linear-gradient(135deg, #10b981, #059669);
+    @apply text-white px-3 py-1 rounded-full text-xs font-semibold;
   }
 
   .category-card {
-    @apply bg-card-gradient rounded-2xl p-6 shadow-lg hover:shadow-neon-cyan transition-all duration-300 cursor-pointer border border-white/10;
+    background: linear-gradient(135deg, rgba(42, 42, 42, 0.5), rgba(58, 58, 58, 0.3));
+    @apply rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer border;
+    border-color: rgba(255, 255, 255, 0.05);
   }
 
   .category-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0, 240, 255, 0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(0, 240, 255, 0.08);
+    border-color: rgba(0, 240, 255, 0.15);
   }
 
-  .neon-button {
-    @apply bg-primary-gradient text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300;
-    box-shadow: 0 0 20px rgba(255, 28, 247, 0.4);
+  .primary-button {
+    background: linear-gradient(135deg, rgba(255, 28, 247, 0.9), rgba(0, 240, 255, 0.9));
+    @apply text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300;
+    box-shadow: 0 4px 15px rgba(255, 28, 247, 0.2);
   }
 
-  .neon-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(255, 28, 247, 0.6);
+  .primary-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(255, 28, 247, 0.3);
   }
 
   .secondary-button {
-    @apply bg-secondary-gradient text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300;
-    box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.8), rgba(236, 72, 153, 0.8));
+    @apply text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300;
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.15);
   }
 
   .secondary-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.6);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.25);
   }
 
   .accent-button {
-    @apply bg-accent-gradient text-deep-black px-6 py-3 rounded-xl font-bold transition-all duration-300;
-    box-shadow: 0 0 20px rgba(0, 255, 157, 0.4);
+    background: linear-gradient(135deg, rgba(0, 255, 157, 0.9), rgba(16, 185, 129, 0.9));
+    @apply text-deep-black px-6 py-3 rounded-lg font-semibold transition-all duration-300;
+    box-shadow: 0 4px 15px rgba(0, 255, 157, 0.15);
   }
 
   .accent-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(0, 255, 157, 0.6);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0, 255, 157, 0.25);
   }
 
   .stats-card {
-    @apply bg-card-gradient rounded-xl p-6 text-center border border-white/10 hover:border-electric-pink/50 transition-all duration-300;
+    background: linear-gradient(135deg, rgba(42, 42, 42, 0.4), rgba(58, 58, 58, 0.2));
+    @apply rounded-xl p-6 text-center border transition-all duration-300;
+    border-color: rgba(255, 255, 255, 0.05);
   }
 
   .stats-card:hover {
-    box-shadow: 0 10px 25px rgba(255, 28, 247, 0.2);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   }
 
   .header-logo {
-    filter: drop-shadow(0 0 10px rgba(255, 28, 247, 0.5));
+    filter: drop-shadow(0 0 8px rgba(255, 28, 247, 0.3));
     transition: all 0.3s ease;
   }
 
   .header-logo:hover {
-    transform: scale(1.1) rotate(5deg);
-    filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.8));
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 12px rgba(0, 240, 255, 0.4));
   }
 
   .line-clamp-2 {
@@ -119,20 +136,37 @@
     overflow: hidden;
   }
 
-  .glow-text {
-    text-shadow: 0 0 10px currentColor;
+  .subtle-glow {
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
   }
 
-  .floating-element {
-    animation: float 3s ease-in-out infinite;
+  .subtle-input {
+    background-color: rgba(42, 42, 42, 0.4);
+    @apply border rounded-lg px-4 py-3 text-white placeholder-muted-gray focus:outline-none transition-all duration-300;
+    border-color: rgba(255, 255, 255, 0.1);
   }
 
-  .neon-input {
-    @apply bg-dark-gray/50 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-muted-gray focus:border-electric-pink focus:outline-none transition-all duration-300;
+  .subtle-input:focus {
+    border-color: rgba(255, 28, 247, 0.3);
+    box-shadow: 0 0 15px rgba(255, 28, 247, 0.1);
   }
 
-  .neon-input:focus {
-    box-shadow: 0 0 20px rgba(255, 28, 247, 0.3);
+  .discount-badge {
+    background: linear-gradient(135deg, #f97316, #ef4444);
+    @apply text-white px-2 py-1 rounded-md text-xs font-bold;
+    box-shadow: 0 0 8px rgba(249, 115, 22, 0.3);
+  }
+
+  .neon-cyan-text {
+    color: rgba(0, 240, 255, 0.8);
+  }
+
+  .neon-green-text {
+    color: rgba(0, 255, 157, 0.8);
+  }
+
+  .hot-pink-text {
+    color: rgba(236, 72, 153, 0.8);
   }
 }
 
@@ -149,14 +183,47 @@
     animation: slideUp 0.8s ease-out;
   }
 
-  .animate-glow {
-    animation: glow 2s ease-in-out infinite alternate;
+  .animate-subtle-float {
+    animation: subtleFloat 4s ease-in-out infinite;
+  }
+}
+
+/* Subtle animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes subtleFloat {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
   }
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -164,21 +231,32 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #ff1cf7, #00f0ff);
-  border-radius: 4px;
+  background: linear-gradient(135deg, rgba(255, 28, 247, 0.6), rgba(0, 240, 255, 0.6));
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #8b5cf6, #ec4899);
+  background: linear-gradient(135deg, rgba(255, 28, 247, 0.8), rgba(0, 240, 255, 0.8));
 }
 
 /* Selection styles */
 ::selection {
-  background: rgba(255, 28, 247, 0.3);
+  background: rgba(255, 28, 247, 0.2);
   color: white;
 }
 
 ::-moz-selection {
-  background: rgba(255, 28, 247, 0.3);
+  background: rgba(255, 28, 247, 0.2);
   color: white;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
