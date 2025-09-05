@@ -1,795 +1,508 @@
 "use client"
-import { useState, useEffect, Suspense, lazy, memo, useCallback, useMemo, startTransition } from "react"
-import { useIntersectionObserver } from "../hooks/useIntersectionObserver"
-import { usePerformanceMonitor } from "../hooks/usePerformanceMonitor"
 
-// Preload critical 3D components with higher priority
-const Floating3DLogo = lazy(() => import("../components/3d-illustrations/floating-3d-logo"))
-const IsometricCards = lazy(() => import("../components/3d-illustrations/isometric-cards"))
-const HolographicSphere = lazy(() => import("../components/3d-illustrations/holographic-sphere"))
-const GeometricTunnel = lazy(() => import("../components/3d-illustrations/geometric-tunnel"))
+import React, { Suspense, lazy, useState, useEffect, useMemo, useCallback } from "react"
+import {
+  Search,
+  Menu,
+  X,
+  Star,
+  ShoppingCart,
+  Heart,
+  Filter,
+  Grid,
+  List,
+  ChevronDown,
+  ArrowRight,
+  Zap,
+  Shield,
+  Truck,
+  Award,
+} from "lucide-react"
 
-// Optimized 3D Text Component with reduced calculations
-const Enhanced3DText = memo(({ text, className = "", effects3DEnabled = false, isMobile = false }) => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
-  const [isHovered, setIsHovered] = useState(false)
+// Lazy load heavy components for better performance
+const ParticleField = lazy(() => import("../components/particle-field"))
+const CSS3DBackground = lazy(() => import("../components/unique-effects/css-3d-background"))
+const HolographicCards = lazy(() => import("../components/unique-effects/holographic-cards"))
+const NeonTunnel = lazy(() => import("../components/unique-effects/neon-tunnel"))
+const LiquidMetalButton = lazy(() => import("../components/unique-effects/liquid-metal-button"))
+const GlitchText = lazy(() => import("../components/unique-effects/glitch-text"))
+const FloatingUIElements = lazy(() => import("../components/unique-effects/floating-ui-elements"))
+const InteractiveMeshGradient = lazy(() => import("../components/unique-effects/interactive-mesh-gradient"))
+const MorphingBlobCursor = lazy(() => import("../components/unique-effects/morphing-cursor"))
 
-  // Throttled mouse tracking with RAF
+// Performance monitoring hook
+const usePerformanceMonitor = () => {
+  const [isHighPerformance, setIsHighPerformance] = useState(true)
+  const [deviceCapabilities, setDeviceCapabilities] = useState({
+    cores: 1,
+    memory: 1,
+    connection: "slow-2g",
+  })
+
   useEffect(() => {
-    if (!effects3DEnabled || isMobile) return
+    // Check device capabilities
+    const checkPerformance = () => {
+      const cores = navigator.hardwareConcurrency || 1
+      const memory = (navigator as any).deviceMemory || 1
+      const connection = (navigator as any).connection?.effectiveType || "slow-2g"
 
-    let rafId = null
-    let lastTime = 0
+      setDeviceCapabilities({ cores, memory, connection })
 
-    const handleMouseMove = (e) => {
-      const now = performance.now()
-      if (now - lastTime < 16) return // Limit to ~60fps
+      // Determine if device can handle high-performance features
+      const isHighPerf = cores >= 4 && memory >= 4 && ["4g", "3g"].includes(connection)
 
-      if (rafId) cancelAnimationFrame(rafId)
-
-      rafId = requestAnimationFrame(() => {
-        const rect = document.querySelector(".hero-text-container")?.getBoundingClientRect()
-        if (rect) {
-          setMousePosition({
-            x: (e.clientX - rect.left) / rect.width,
-            y: (e.clientY - rect.top) / rect.height,
-          })
-        }
-        lastTime = now
-      })
+      setIsHighPerformance(isHighPerf)
     }
 
-    document.addEventListener("mousemove", handleMouseMove, { passive: true })
-    return () => {
-      document.removeEventListener("mousemove", handleMouseMove)
-      if (rafId) cancelAnimationFrame(rafId)
-    }
-  }, [effects3DEnabled, isMobile])
+    checkPerformance()
+  }, [])
 
-  // Memoized transform styles
-  const transformStyle = useMemo(() => {
-    if (!effects3DEnabled || isMobile) return { transform: "none" }
+  return { isHighPerformance, deviceCapabilities }
+}
 
-    return {
-      transform: `
-        perspective(1200px) 
-        rotateX(${mousePosition.y * 1.5 - 0.75}deg) 
-        rotateY(${mousePosition.x * 1.5 - 0.75}deg)
-        translateZ(${isHovered ? 15 : 0}px)
-      `,
-      transformStyle: "preserve-3d",
-      transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-    }
-  }, [effects3DEnabled, isMobile, mousePosition.x, mousePosition.y, isHovered])
+// Optimized intersection observer hook
+const useIntersectionObserver = (options = {}) => {
+  const [isIntersecting, setIsIntersecting] = useState(false)
+  const [ref, setRef] = useState<Element | null>(null)
+
+  useEffect(() => {
+    if (!ref) return
+
+    const observer = new IntersectionObserver(([entry]) => setIsIntersecting(entry.isIntersecting), {
+      rootMargin: "50px",
+      ...options,
+    })
+
+    observer.observe(ref)
+    return () => observer.disconnect()
+  }, [ref, options])
+
+  return [setRef, isIntersecting] as const
+}
+
+// Loading skeleton component
+const LoadingSkeleton = ({ className = "" }: { className?: string }) => (
+  <div className={`animate-pulse bg-gray-700 rounded ${className}`} />
+)
+
+// Optimized product card component
+const ProductCard = React.memo(({ product, index }: { product: any; index: number }) => {
+  const [imageLoaded, setImageLoaded] = useState(false)
 
   return (
-    <div
-      className={`hero-text-container relative ${className}`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div className="relative z-10" style={transformStyle}>
-        {text}
+    <div className="group relative bg-white/5 backdrop-blur-sm rounded-xl p-4 hover:bg-white/10 transition-all duration-300 hover:scale-105 hover:shadow-2xl border border-white/10">
+      <div className="aspect-square mb-4 overflow-hidden rounded-lg bg-gray-800">
+        {!imageLoaded && <LoadingSkeleton className="w-full h-full" />}
+        <img
+          src={`/product_placeholder.png?height=300&width=300&text=Product ${index + 1}`}
+          alt={product.name}
+          className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
+          onLoad={() => setImageLoaded(true)}
+          loading="lazy"
+        />
       </div>
 
-      {/* Reduced particle count for better performance */}
-      {effects3DEnabled && !isMobile && (
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {[...Array(6)].map((_, i) => (
-            <div
+      <div className="space-y-2">
+        <h3 className="font-semibold text-white group-hover:text-blue-300 transition-colors">{product.name}</h3>
+        <div className="flex items-center space-x-1">
+          {[...Array(5)].map((_, i) => (
+            <Star
               key={i}
-              className="absolute w-1.5 h-1.5 rounded-full opacity-50 will-change-transform"
-              style={{
-                background: `rgba(${99 + i * 20}, ${102 + i * 15}, 241, 0.7)`,
-                left: `${15 + ((i * 12) % 70)}%`,
-                top: `${20 + ((i * 15) % 60)}%`,
-                transform: `translate3d(
-                  ${mousePosition.x * (15 + i * 2)}px,
-                  ${mousePosition.y * (10 + i)}px,
-                  ${i * 3}px
-                )`,
-                animation: `particle-float ${2 + i * 0.3}s ease-in-out infinite`,
-                animationDelay: `${i * 0.2}s`,
-              }}
+              className={`w-4 h-4 ${i < product.rating ? "text-yellow-400 fill-current" : "text-gray-600"}`}
             />
           ))}
+          <span className="text-sm text-gray-400 ml-2">({product.reviews})</span>
         </div>
-      )}
-
-      <style jsx>{`
-        @keyframes particle-float {
-          0%, 100% { 
-            transform: translateY(0px) scale(1); 
-            opacity: 0.5; 
-          }
-          50% { 
-            transform: translateY(-10px) scale(1.1); 
-            opacity: 0.8; 
-          }
-        }
-      `}</style>
-    </div>
-  )
-})
-Enhanced3DText.displayName = "Enhanced3DText"
-
-// Optimized Hero Section with reduced complexity
-const IntegratedHeroSection = memo(({ effects3DEnabled, isMobile }) => {
-  const [heroRef, heroVisible] = useIntersectionObserver({ threshold: 0.1 })
-  const [mousePosition, setMousePosition] = useState({ x: 0.5, y: 0.5 })
-
-  // Optimized mouse tracking with debouncing
-  useEffect(() => {
-    if (!effects3DEnabled || isMobile) return
-
-    let timeoutId = null
-    const handleMouseMove = (e) => {
-      if (timeoutId) clearTimeout(timeoutId)
-
-      timeoutId = setTimeout(() => {
-        setMousePosition({
-          x: e.clientX / window.innerWidth,
-          y: e.clientY / window.innerHeight,
-        })
-      }, 8) // Reduced frequency for better performance
-    }
-
-    document.addEventListener("mousemove", handleMouseMove, { passive: true })
-    return () => {
-      document.removeEventListener("mousemove", handleMouseMove)
-      if (timeoutId) clearTimeout(timeoutId)
-    }
-  }, [effects3DEnabled, isMobile])
-
-  // Memoized background style
-  const backgroundStyle = useMemo(() => {
-    if (!effects3DEnabled || isMobile) {
-      return { background: "linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #0f0f23 100%)" }
-    }
-
-    return {
-      background: `
-        radial-gradient(circle at ${mousePosition.x * 100}% ${mousePosition.y * 100}%, 
-          rgba(99, 102, 241, 0.12) 0%, 
-          transparent 40%
-        ),
-        radial-gradient(circle at ${(1 - mousePosition.x) * 100}% ${(1 - mousePosition.y) * 100}%, 
-          rgba(236, 72, 153, 0.08) 0%, 
-          transparent 40%
-        ),
-        linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #0f0f23 100%)
-      `,
-    }
-  }, [effects3DEnabled, isMobile, mousePosition.x, mousePosition.y])
-
-  return (
-    <section
-      ref={heroRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
-      style={backgroundStyle}
-    >
-      {/* Simplified 3D Tunnel Background - only load when visible */}
-      {effects3DEnabled && !isMobile && heroVisible && (
-        <div className="absolute inset-0 opacity-20">
-          <Suspense fallback={null}>
-            <GeometricTunnel segments={4} speed={0.15} interactive={false} />
-          </Suspense>
-        </div>
-      )}
-
-      <div className="relative z-10 text-center max-w-6xl mx-auto px-6">
-        {/* Optimized Badge */}
-        <div className="inline-flex items-center gap-2 mb-8 bg-purple-500/20 border border-white/20 rounded-full px-6 py-3 backdrop-blur-sm">
-          <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-          <span className="text-sm font-medium">New Platform Launch</span>
-        </div>
-
-        {/* Main Hero Title */}
-        <div className="mb-6">
-          <Enhanced3DText
-            effects3DEnabled={effects3DEnabled}
-            isMobile={isMobile}
-            className="text-5xl md:text-7xl lg:text-8xl font-bold leading-tight"
-            text={
-              <h1>
-                <span className="block mb-4 text-white/90">The Future of</span>
-                <span
-                  className="block relative bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent"
-                  style={{
-                    filter: effects3DEnabled && !isMobile ? "drop-shadow(0 0 20px rgba(99, 102, 241, 0.4))" : "none",
-                  }}
-                >
-                  Digital Experience
-                </span>
-              </h1>
-            }
-          />
-        </div>
-
-        {/* Simplified Description */}
-        <p className="text-lg md:text-xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
-          Immerse yourself in next-generation streaming, shopping, and content creation. Experience the web like never
-          before.
-        </p>
-
-        {/* Optimized Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-          <button className="group bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-200 hover:scale-105 active:scale-95">
-            <span className="flex items-center gap-2">
-              Start Exploring
-              <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>
-            </span>
-          </button>
-
-          <button className="group flex items-center gap-3 bg-white/10 backdrop-blur-sm border border-white/20 px-8 py-4 rounded-full font-semibold text-lg hover:bg-white/20 transition-all duration-200">
-            <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center transition-transform group-hover:scale-110 duration-200">
-              ▶
-            </div>
-            Watch Demo
-          </button>
+        <div className="flex items-center justify-between">
+          <span className="text-xl font-bold text-white">${product.price}</span>
+          <div className="flex space-x-2">
+            <button className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
+              <Heart className="w-4 h-4 text-white" />
+            </button>
+            <button className="p-2 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors">
+              <ShoppingCart className="w-4 h-4 text-white" />
+            </button>
+          </div>
         </div>
       </div>
-    </section>
+    </div>
   )
 })
-IntegratedHeroSection.displayName = "IntegratedHeroSection"
 
-// Optimized icon components
-const PlayIcon = memo(() => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-    <polygon points="5,3 19,12 5,21" />
-  </svg>
-))
-PlayIcon.displayName = "PlayIcon"
+ProductCard.displayName = "ProductCard"
 
-const SearchIcon = memo(() => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-    <circle cx="11" cy="11" r="8" />
-    <path d="21 21l-4.35-4.35" />
-  </svg>
-))
-SearchIcon.displayName = "SearchIcon"
+export default function HomePage() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
+  const [sortBy, setSortBy] = useState("featured")
+  const [isFilterOpen, setIsFilterOpen] = useState(false)
 
-const BellIcon = memo(() => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-    <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-  </svg>
-))
-BellIcon.displayName = "BellIcon"
+  const { isHighPerformance } = usePerformanceMonitor()
+  const [heroRef, isHeroVisible] = useIntersectionObserver()
+  const [featuresRef, isFeaturesVisible] = useIntersectionObserver()
+  const [productsRef, isProductsVisible] = useIntersectionObserver()
 
-// Highly optimized CSS Background Component
-const CSSBackground = memo(() => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
-  const [isVisible, setIsVisible] = useState(false)
-
-  useEffect(() => {
-    let rafId = null
-    let lastTime = 0
-
-    const handleMouseMove = (e) => {
-      const now = performance.now()
-      if (now - lastTime < 32) return // Limit to 30fps for background
-
-      if (rafId) cancelAnimationFrame(rafId)
-
-      rafId = requestAnimationFrame(() => {
-        setMousePosition({
-          x: (e.clientX / window.innerWidth) * 2 - 1,
-          y: (e.clientY / window.innerHeight) * 2 - 1,
-        })
-        lastTime = now
-      })
-    }
-
-    const observer = new IntersectionObserver(([entry]) => setIsVisible(entry.isIntersecting), { threshold: 0.1 })
-
-    const element = document.body
-    observer.observe(element)
-
-    if (isVisible) {
-      window.addEventListener("mousemove", handleMouseMove, { passive: true })
-    }
-
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove)
-      observer.disconnect()
-      if (rafId) cancelAnimationFrame(rafId)
-    }
-  }, [isVisible])
-
-  const backgroundStyle = useMemo(
-    () => ({
-      background: `
-      radial-gradient(circle at ${50 + mousePosition.x * 10}% ${50 + mousePosition.y * 10}%, 
-        rgba(99, 102, 241, 0.08) 0%, 
-        transparent 30%
-      ),
-      radial-gradient(circle at ${30 - mousePosition.x * 8}% ${70 - mousePosition.y * 8}%, 
-        rgba(236, 72, 153, 0.06) 0%, 
-        transparent 30%
-      ),
-      linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #0f0f23 100%)
-    `,
-    }),
-    [mousePosition.x, mousePosition.y],
+  // Memoized sample data
+  const sampleProducts = useMemo(
+    () =>
+      Array.from({ length: 12 }, (_, i) => ({
+        id: i + 1,
+        name: `Amazing Product ${i + 1}`,
+        price: Math.floor(Math.random() * 500) + 50,
+        rating: Math.floor(Math.random() * 2) + 4,
+        reviews: Math.floor(Math.random() * 1000) + 100,
+        category: ["Electronics", "Fashion", "Home", "Sports"][Math.floor(Math.random() * 4)],
+      })),
+    [],
   )
+
+  // Optimized search handler
+  const handleSearch = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault()
+      console.log("Searching for:", searchQuery)
+    },
+    [searchQuery],
+  )
+
+  const toggleMenu = useCallback(() => setIsMenuOpen((prev) => !prev), [])
+  const toggleFilter = useCallback(() => setIsFilterOpen((prev) => !prev), [])
 
   return (
-    <div className="fixed inset-0 overflow-hidden pointer-events-none will-change-transform">
-      <div className="absolute inset-0 transition-opacity duration-500" style={backgroundStyle} />
-    </div>
-  )
-})
-CSSBackground.displayName = "CSSBackground"
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 text-white overflow-hidden">
+      {/* Background Effects - Only load on high-performance devices */}
+      {isHighPerformance && (
+        <Suspense fallback={null}>
+          <div className="fixed inset-0 z-0">
+            <ParticleField />
+            <CSS3DBackground />
+          </div>
+        </Suspense>
+      )}
 
-// Optimized loading component
-const Loading3D = memo(({ className = "" }) => (
-  <div className={`animate-pulse bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-lg ${className}`}>
-    <div className="flex items-center justify-center h-full">
-      <div className="w-6 h-6 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
-    </div>
-  </div>
-))
-Loading3D.displayName = "Loading3D"
-
-// Optimized navigation component with reduced re-renders
-const Navigation = memo(
-  ({ currentPage, setCurrentPage, isMobile, isMobileMenuOpen, setIsMobileMenuOpen, effects3DEnabled }) => {
-    const navItems = useMemo(
-      () => [
-        { key: "home", label: "Home" },
-        { key: "explore", label: "Explore" },
-        { key: "create", label: "Create" },
-        { key: "search", label: "Search" },
-      ],
-      [],
-    )
-
-    const mobileNavItems = useMemo(
-      () => [
-        { key: "home", label: "Home", icon: "🏠" },
-        { key: "explore", label: "Explore", icon: "🔍" },
-        { key: "create", label: "Create", icon: "✨" },
-        { key: "search", label: "Search", icon: "📱" },
-      ],
-      [],
-    )
-
-    const handleNavClick = useCallback(
-      (key) => {
-        startTransition(() => {
-          setCurrentPage(key)
-          if (isMobile) {
-            setIsMobileMenuOpen(false)
-          }
-        })
-      },
-      [setCurrentPage, isMobile, setIsMobileMenuOpen],
-    )
-
-    return (
-      <>
-        <nav className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-xl border-b border-white/10">
-          <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-            {/* Optimized Logo */}
-            <div className="flex items-center gap-3">
-              {effects3DEnabled && !isMobile ? (
-                <Suspense
-                  fallback={
-                    <div className="w-10 h-10 bg-gradient-to-r from-purple-500/40 to-pink-500/40 rounded-lg animate-pulse" />
-                  }
-                >
-                  <Floating3DLogo size={40} autoRotate={false} interactive={true} subtle={true} />
-                </Suspense>
-              ) : (
-                <div className="w-10 h-10 bg-gradient-to-r from-purple-500/40 to-pink-500/40 rounded-lg flex items-center justify-center text-xl font-bold">
-                  🎬
-                </div>
-              )}
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-white via-purple-50 to-purple-100 bg-clip-text text-transparent">
-                Dekho
-              </h1>
+      {/* Navigation */}
+      <nav className="relative z-50 bg-black/20 backdrop-blur-md border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <div className="flex items-center space-x-4">
+              <img src="/dekho-logo.png" alt="Dekho" className="h-8 w-auto header-logo-3d" loading="eager" />
+              <span className="text-xl font-bold text-3d-effect">Dekho</span>
             </div>
 
             {/* Desktop Navigation */}
-            {!isMobile && (
-              <div className="flex items-center gap-6">
-                {navItems.map(({ key, label }) => (
-                  <button
-                    key={key}
-                    onClick={() => handleNavClick(key)}
-                    className={`px-4 py-2 rounded-lg transition-all duration-150 ${
-                      currentPage === key
-                        ? "bg-purple-500/20 text-white border border-purple-500/30"
-                        : "text-gray-300 hover:text-white hover:bg-white/5"
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
+            <div className="hidden md:flex items-center space-x-8">
+              <a href="#" className="hover:text-blue-300 transition-colors">
+                Home
+              </a>
+              <a href="#" className="hover:text-blue-300 transition-colors">
+                Products
+              </a>
+              <a href="#" className="hover:text-blue-300 transition-colors">
+                Categories
+              </a>
+              <a href="#" className="hover:text-blue-300 transition-colors">
+                About
+              </a>
+              <a href="#" className="hover:text-blue-300 transition-colors">
+                Contact
+              </a>
+            </div>
 
-                <button className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-full font-semibold hover:scale-105 transition-transform duration-150">
-                  Start Selling
-                </button>
-              </div>
-            )}
+            {/* Search Bar */}
+            <div className="hidden md:flex items-center flex-1 max-w-md mx-8">
+              <form onSubmit={handleSearch} className="w-full">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <input
+                    type="text"
+                    placeholder="Search products..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
+                  />
+                </div>
+              </form>
+            </div>
 
-            {/* Mobile Menu Button */}
-            {isMobile && (
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="text-2xl p-2 hover:bg-white/10 rounded-lg transition-colors duration-150"
-                aria-label="Toggle menu"
-              >
-                {isMobileMenuOpen ? "✕" : "☰"}
-              </button>
-            )}
-          </div>
-        </nav>
-
-        {/* Mobile Menu Overlay */}
-        {isMobile && isMobileMenuOpen && (
-          <div className="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center gap-8">
-            {mobileNavItems.map(({ key, label, icon }) => (
-              <button
-                key={key}
-                onClick={() => handleNavClick(key)}
-                className={`flex items-center gap-4 px-8 py-4 rounded-2xl text-xl font-semibold transition-all duration-150 ${
-                  currentPage === key
-                    ? "bg-purple-500/20 text-white border border-purple-500/30"
-                    : "text-gray-300 hover:text-white hover:bg-white/10"
-                }`}
-              >
-                <span className="text-2xl">{icon}</span>
-                {label}
-              </button>
-            ))}
-            <button className="mt-4 text-xl px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-semibold">
-              Start Selling
+            {/* Mobile menu button */}
+            <button onClick={toggleMenu} className="md:hidden p-2 rounded-md hover:bg-white/10 transition-colors">
+              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
+        </div>
+
+        {/* Mobile Navigation */}
+        {isMenuOpen && (
+          <div className="md:hidden bg-black/30 backdrop-blur-md border-t border-white/10">
+            <div className="px-4 py-4 space-y-4">
+              <form onSubmit={handleSearch} className="w-full">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <input
+                    type="text"
+                    placeholder="Search products..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
+                  />
+                </div>
+              </form>
+              <div className="space-y-2">
+                <a href="#" className="block py-2 hover:text-blue-300 transition-colors">
+                  Home
+                </a>
+                <a href="#" className="block py-2 hover:text-blue-300 transition-colors">
+                  Products
+                </a>
+                <a href="#" className="block py-2 hover:text-blue-300 transition-colors">
+                  Categories
+                </a>
+                <a href="#" className="block py-2 hover:text-blue-300 transition-colors">
+                  About
+                </a>
+                <a href="#" className="block py-2 hover:text-blue-300 transition-colors">
+                  Contact
+                </a>
+              </div>
+            </div>
+          </div>
         )}
-      </>
-    )
-  },
-)
-Navigation.displayName = "Navigation"
+      </nav>
 
-// Main App Component with performance optimizations
-export default function Page() {
-  const [currentPage, setCurrentPage] = useState("home")
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
-  const [effects3DEnabled, setEffects3DEnabled] = useState(false)
+      {/* Hero Section */}
+      <section ref={heroRef} className="relative z-10 pt-20 pb-32 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto text-center">
+          <div
+            className={`transition-all duration-1000 ${isHeroVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+          >
+            {isHighPerformance ? (
+              <Suspense
+                fallback={
+                  <h1 className="text-5xl md:text-7xl font-bold mb-6 text-3d-effect">Discover Amazing Products</h1>
+                }
+              >
+                <GlitchText text="Discover Amazing Products" className="text-5xl md:text-7xl font-bold mb-6" />
+              </Suspense>
+            ) : (
+              <h1 className="text-5xl md:text-7xl font-bold mb-6 text-3d-effect">Discover Amazing Products</h1>
+            )}
 
-  const { isSlowDevice } = usePerformanceMonitor()
+            <p className="text-xl md:text-2xl mb-8 text-gray-300 max-w-3xl mx-auto">
+              Experience the future of shopping with our cutting-edge platform featuring immersive 3D effects and
+              seamless interactions.
+            </p>
 
-  // Optimized device detection with debouncing
-  useEffect(() => {
-    let timeoutId = null
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              {isHighPerformance ? (
+                <Suspense
+                  fallback={
+                    <button className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold text-lg transition-all duration-300 hover:scale-105">
+                      Start Exploring
+                    </button>
+                  }
+                >
+                  <LiquidMetalButton>Start Exploring</LiquidMetalButton>
+                </Suspense>
+              ) : (
+                <button className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold text-lg transition-all duration-300 hover:scale-105">
+                  Start Exploring
+                </button>
+              )}
 
-    const checkDevice = () => {
-      if (timeoutId) clearTimeout(timeoutId)
+              <button className="px-8 py-4 border border-white/30 hover:bg-white/10 rounded-lg font-semibold text-lg transition-all duration-300 hover:scale-105">
+                Learn More
+              </button>
+            </div>
+          </div>
+        </div>
 
-      timeoutId = setTimeout(() => {
-        const mobile = window.innerWidth <= 768
-        const isLowEnd = isSlowDevice || navigator.hardwareConcurrency <= 4
+        {/* Floating UI Elements */}
+        {isHighPerformance && (
+          <Suspense fallback={null}>
+            <FloatingUIElements />
+          </Suspense>
+        )}
+      </section>
 
-        setIsMobile(mobile)
+      {/* Features Section */}
+      <section ref={featuresRef} className="relative z-10 py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div
+            className={`text-center mb-16 transition-all duration-1000 ${isFeaturesVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-3d-effect">Why Choose Dekho?</h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Experience shopping like never before with our innovative features and cutting-edge technology.
+            </p>
+          </div>
 
-        // Enable 3D effects only on capable devices with delay
-        if (!mobile && !isLowEnd) {
-          setTimeout(() => setEffects3DEnabled(true), 1500)
-        }
-      }, 100)
-    }
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { icon: Zap, title: "Lightning Fast", description: "Optimized performance for seamless browsing" },
+              { icon: Shield, title: "Secure Shopping", description: "Advanced security for safe transactions" },
+              { icon: Truck, title: "Fast Delivery", description: "Quick and reliable shipping worldwide" },
+              { icon: Award, title: "Premium Quality", description: "Curated selection of top-quality products" },
+            ].map((feature, index) => (
+              <div
+                key={index}
+                className={`group bg-white/5 backdrop-blur-sm rounded-xl p-6 hover:bg-white/10 transition-all duration-500 hover:scale-105 border border-white/10 ${
+                  isFeaturesVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+                }`}
+                style={{ transitionDelay: `${index * 100}ms` }}
+              >
+                <feature.icon className="w-12 h-12 text-blue-400 mb-4 group-hover:scale-110 transition-transform duration-300" />
+                <h3 className="text-xl font-semibold mb-2 text-white">{feature.title}</h3>
+                <p className="text-gray-300">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
 
-    checkDevice()
-    window.addEventListener("resize", checkDevice, { passive: true })
-    return () => {
-      window.removeEventListener("resize", checkDevice)
-      if (timeoutId) clearTimeout(timeoutId)
-    }
-  }, [isSlowDevice])
+        {/* Interactive Mesh Gradient */}
+        {isHighPerformance && (
+          <Suspense fallback={null}>
+            <InteractiveMeshGradient />
+          </Suspense>
+        )}
+      </section>
 
-  // Prevent body scroll when mobile menu is open
-  useEffect(() => {
-    document.body.style.overflow = isMobileMenuOpen ? "hidden" : "unset"
-    return () => {
-      document.body.style.overflow = "unset"
-    }
-  }, [isMobileMenuOpen])
+      {/* Products Section */}
+      <section ref={productsRef} className="relative z-10 py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Section Header */}
+          <div
+            className={`flex flex-col md:flex-row justify-between items-start md:items-center mb-12 transition-all duration-1000 ${isProductsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+          >
+            <div>
+              <h2 className="text-4xl md:text-5xl font-bold mb-4 text-3d-effect">Featured Products</h2>
+              <p className="text-xl text-gray-300">Discover our handpicked selection of amazing products</p>
+            </div>
 
-  // Memoized page content renderer with startTransition
-  const renderPageContent = useCallback(() => {
-    const props = { effects3DEnabled, isMobile }
+            {/* Controls */}
+            <div className="flex items-center space-x-4 mt-6 md:mt-0">
+              <div className="flex items-center space-x-2 bg-white/10 rounded-lg p-1">
+                <button
+                  onClick={() => setViewMode("grid")}
+                  className={`p-2 rounded ${viewMode === "grid" ? "bg-blue-600" : "hover:bg-white/10"} transition-colors`}
+                >
+                  <Grid className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode("list")}
+                  className={`p-2 rounded ${viewMode === "list" ? "bg-blue-600" : "hover:bg-white/10"} transition-colors`}
+                >
+                  <List className="w-4 h-4" />
+                </button>
+              </div>
 
-    switch (currentPage) {
-      case "home":
-        return <HomePage {...props} />
-      case "explore":
-        return <ExplorePage effects3DEnabled={effects3DEnabled} />
-      case "create":
-        return <CreatePage effects3DEnabled={effects3DEnabled} />
-      case "search":
-        return <SearchPage />
-      default:
-        return <HomePage {...props} />
-    }
-  }, [currentPage, effects3DEnabled, isMobile])
+              <div className="relative">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="appearance-none bg-white/10 border border-white/20 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="featured">Featured</option>
+                  <option value="price-low">Price: Low to High</option>
+                  <option value="price-high">Price: High to Low</option>
+                  <option value="rating">Highest Rated</option>
+                </select>
+                <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 pointer-events-none" />
+              </div>
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white relative overflow-hidden">
-      <CSSBackground />
+              <button
+                onClick={toggleFilter}
+                className="flex items-center space-x-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg px-4 py-2 transition-colors"
+              >
+                <Filter className="w-4 h-4" />
+                <span>Filter</span>
+              </button>
+            </div>
+          </div>
 
-      <Navigation
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        isMobile={isMobile}
-        isMobileMenuOpen={isMobileMenuOpen}
-        setIsMobileMenuOpen={setIsMobileMenuOpen}
-        effects3DEnabled={effects3DEnabled}
-      />
+          {/* Products Grid */}
+          <div
+            className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 transition-all duration-1000 ${isProductsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+          >
+            {sampleProducts.map((product, index) => (
+              <ProductCard key={product.id} product={product} index={index} />
+            ))}
+          </div>
 
-      <main className="relative z-10 pt-20">
-        <Suspense fallback={<Loading3D className="min-h-screen" />}>{renderPageContent()}</Suspense>
-      </main>
+          {/* Load More Button */}
+          <div className="text-center mt-12">
+            <button className="inline-flex items-center space-x-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-lg font-semibold text-lg transition-all duration-300 hover:scale-105">
+              <span>Load More Products</span>
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Holographic Cards Effect */}
+        {isHighPerformance && (
+          <Suspense fallback={null}>
+            <HolographicCards />
+          </Suspense>
+        )}
+      </section>
+
+      {/* Neon Tunnel Effect */}
+      {isHighPerformance && (
+        <Suspense fallback={null}>
+          <NeonTunnel />
+        </Suspense>
+      )}
+
+      {/* Custom Cursor */}
+      {isHighPerformance && (
+        <Suspense fallback={null}>
+          <MorphingBlobCursor />
+        </Suspense>
+      )}
+
+      {/* Filter Sidebar */}
+      {isFilterOpen && (
+        <div className="fixed inset-0 z-50 flex">
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={toggleFilter} />
+          <div className="relative ml-auto w-80 bg-gray-900/95 backdrop-blur-md h-full overflow-y-auto border-l border-white/10">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-semibold">Filters</h3>
+                <button onClick={toggleFilter} className="p-2 hover:bg-white/10 rounded-lg transition-colors">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Filter content would go here */}
+              <div className="space-y-6">
+                <div>
+                  <h4 className="font-medium mb-3">Category</h4>
+                  <div className="space-y-2">
+                    {["Electronics", "Fashion", "Home", "Sports"].map((category) => (
+                      <label key={category} className="flex items-center space-x-2">
+                        <input type="checkbox" className="rounded border-gray-600 bg-gray-700" />
+                        <span>{category}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-medium mb-3">Price Range</h4>
+                  <div className="space-y-2">
+                    <input type="range" min="0" max="1000" className="w-full" />
+                    <div className="flex justify-between text-sm text-gray-400">
+                      <span>$0</span>
+                      <span>$1000+</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
-
-// Optimized HomePage component
-const HomePage = memo(({ effects3DEnabled, isMobile }) => {
-  const [featuresRef, featuresVisible] = useIntersectionObserver({ threshold: 0.1 })
-  const [sphereRef, sphereVisible] = useIntersectionObserver({ threshold: 0.1 })
-
-  const featureCards = useMemo(
-    () => [
-      { title: "Live Streaming", icon: "🎬", description: "Broadcast in stunning 4K quality", color: "#6366f1" },
-      { title: "Social Commerce", icon: "🛍️", description: "Interactive shopping experiences", color: "#ec4899" },
-      { title: "Creator Tools", icon: "✨", description: "Professional creation suite", color: "#06b6d4" },
-    ],
-    [],
-  )
-
-  const statsData = useMemo(
-    () => [
-      { number: "10M+", label: "Active Users" },
-      { number: "500K+", label: "Content Creators" },
-      { number: "1B+", label: "Views Monthly" },
-      { number: "99.9%", label: "Uptime" },
-    ],
-    [],
-  )
-
-  return (
-    <div className="relative">
-      <IntegratedHeroSection effects3DEnabled={effects3DEnabled} isMobile={isMobile} />
-
-      {/* Optimized Features Section */}
-      <section ref={featuresRef} className="py-20 px-6 relative">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-6xl font-bold mb-6">Powerful Features</h2>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">Everything you need in one platform</p>
-          </div>
-
-          {effects3DEnabled && !isMobile && featuresVisible ? (
-            <Suspense fallback={<Loading3D className="h-96" />}>
-              <IsometricCards cards={featureCards} autoRotate={false} staggerDelay={200} />
-            </Suspense>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {featureCards.map((feature, index) => (
-                <div
-                  key={index}
-                  className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-all duration-200"
-                >
-                  <div className="text-4xl mb-4">{feature.icon}</div>
-                  <h3 className="text-2xl font-bold mb-3">{feature.title}</h3>
-                  <p className="text-gray-300">{feature.description}</p>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Optimized Holographic Sphere Section */}
-      {effects3DEnabled && !isMobile && (
-        <section ref={sphereRef} className="py-20 px-6">
-          <div className="max-w-7xl mx-auto text-center">
-            <h2 className="text-4xl md:text-6xl font-bold mb-12">Experience the Future</h2>
-            <div className="flex justify-center">
-              {sphereVisible && (
-                <Suspense fallback={<Loading3D className="w-80 h-80" />}>
-                  <HolographicSphere
-                    size={240}
-                    segments={16}
-                    autoRotate={true}
-                    interactive={false}
-                    glowIntensity={0.8}
-                  />
-                </Suspense>
-              )}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Stats Section */}
-      <section className="py-20 px-6 bg-black/20">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-6xl font-bold mb-6">365 Days Target</h2>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            {statsData.map((stat, index) => (
-              <div key={index} className="p-6">
-                <div className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
-                  {stat.number}
-                </div>
-                <div className="text-gray-300">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    </div>
-  )
-})
-HomePage.displayName = "HomePage"
-
-// Optimized other page components
-const ExplorePage = memo(({ effects3DEnabled }) => {
-  const exploreCards = useMemo(
-    () => [
-      { title: "Gaming", icon: "🎮", description: "Live gaming streams", color: "#10b981" },
-      { title: "Fashion", icon: "👗", description: "Style tips and shopping", color: "#f59e0b" },
-      { title: "Cooking", icon: "🍳", description: "Recipe tutorials", color: "#ef4444" },
-    ],
-    [],
-  )
-
-  return (
-    <div className="min-h-screen flex items-center justify-center px-6">
-      <div className="text-center max-w-4xl mx-auto">
-        <h1 className="text-6xl md:text-8xl font-bold mb-6">Explore Amazing Content</h1>
-        <p className="text-xl text-gray-300 mb-12">Discover trending streams, viral content, and emerging creators</p>
-
-        {effects3DEnabled ? (
-          <Suspense fallback={<Loading3D className="h-96" />}>
-            <IsometricCards cards={exploreCards} autoRotate={false} staggerDelay={150} />
-          </Suspense>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
-            {exploreCards.map((category, index) => (
-              <div
-                key={index}
-                className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-all duration-200"
-              >
-                <div className="text-4xl mb-4">{category.icon}</div>
-                <h3 className="text-2xl font-bold mb-3">{category.title}</h3>
-                <p className="text-gray-300">{category.description}</p>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  )
-})
-ExplorePage.displayName = "ExplorePage"
-
-const CreatePage = memo(({ effects3DEnabled }) => {
-  const createCards = useMemo(
-    () => [
-      { title: "Studio Tools", icon: "📹", description: "Professional streaming tools", color: "#8b5cf6" },
-      { title: "Monetization", icon: "💰", description: "Multiple revenue streams", color: "#f59e0b" },
-      { title: "Analytics", icon: "📊", description: "Deep audience insights", color: "#06b6d4" },
-    ],
-    [],
-  )
-
-  return (
-    <div className="min-h-screen flex items-center justify-center px-6">
-      <div className="text-center max-w-4xl mx-auto">
-        <h1 className="text-6xl md:text-8xl font-bold mb-6">Create Amazing Content</h1>
-        <p className="text-xl text-gray-300 mb-12">Build your audience with powerful creation tools</p>
-
-        {effects3DEnabled ? (
-          <Suspense fallback={<Loading3D className="h-96" />}>
-            <IsometricCards cards={createCards} autoRotate={false} staggerDelay={180} />
-          </Suspense>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
-            {createCards.map((tool, index) => (
-              <div
-                key={index}
-                className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-all duration-200"
-              >
-                <div className="text-4xl mb-4">{tool.icon}</div>
-                <h3 className="text-2xl font-bold mb-3">{tool.title}</h3>
-                <p className="text-gray-300">{tool.description}</p>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  )
-})
-CreatePage.displayName = "CreatePage"
-
-const SearchPage = memo(() => {
-  const categories = useMemo(
-    () => ["For You", "Search Dekho", "Sneakers & Streetwear", "Electronics", "Fashion", "Home Goods"],
-    [],
-  )
-
-  const streams = useMemo(
-    () => [
-      { host: "_aishsaree", viewers: "2.3K" },
-      { host: "ravi_bids", viewers: "1.8K" },
-      { host: "priya.shop", viewers: "1.5K" },
-      { host: "vik_boots", viewers: "998" },
-    ],
-    [],
-  )
-
-  return (
-    <div className="min-h-screen px-6 py-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex items-center gap-4 mb-8">
-          <div className="flex-1 relative">
-            <input
-              type="text"
-              placeholder="Search Dekho"
-              className="w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-6 py-4 text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors duration-200"
-            />
-            <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-              <SearchIcon />
-            </div>
-          </div>
-          <button className="p-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full hover:bg-white/20 transition-all duration-200">
-            <BellIcon />
-          </button>
-        </div>
-
-        <div className="flex gap-4 mb-8 overflow-x-auto pb-2">
-          {categories.map((category, index) => (
-            <button
-              key={index}
-              className={`px-6 py-3 rounded-full whitespace-nowrap transition-all duration-200 ${
-                index === 1 ? "bg-purple-500 text-white" : "bg-white/10 text-gray-300 hover:bg-white/20"
-              }`}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {streams.map((stream, index) => (
-            <div
-              key={index}
-              className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-200"
-            >
-              <div className="aspect-square bg-gradient-to-br from-purple-500/20 to-pink-500/20 relative">
-                <div className="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
-                  <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
-                  {stream.viewers}
-                </div>
-              </div>
-              <div className="p-4">
-                <h3 className="font-semibold">{stream.host}</h3>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  )
-})
-SearchPage.displayName = "SearchPage"

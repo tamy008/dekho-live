@@ -1,20 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
 
   // Performance optimizations
   experimental: {
-    optimizeCss: true,
-    optimizePackageImports: ["lucide-react", "framer-motion"],
-    turbo: {
-      rules: {
-        "*.svg": {
-          loaders: ["@svgr/webpack"],
-          as: "*.js",
-        },
-      },
-    },
+    optimizeCss: false, // Disable to prevent build issues
+    optimizePackageImports: ["lucide-react"],
   },
 
   // Image optimization
@@ -87,27 +78,17 @@ const nextConfig = {
         ...config.optimization,
         splitChunks: {
           chunks: "all",
-          minSize: 20000,
-          maxSize: 244000,
           cacheGroups: {
             vendor: {
               test: /[\\/]node_modules[\\/]/,
               name: "vendors",
               chunks: "all",
-              priority: 10,
             },
             common: {
               name: "common",
               minChunks: 2,
               chunks: "all",
               enforce: true,
-              priority: 5,
-            },
-            three: {
-              test: /[\\/]node_modules[\\/](three|@react-three)[\\/]/,
-              name: "three",
-              chunks: "all",
-              priority: 20,
             },
           },
         },
@@ -120,17 +101,6 @@ const nextConfig = {
       fs: false,
       path: false,
       os: false,
-    }
-
-    // Optimize bundle analyzer
-    if (process.env.ANALYZE === "true") {
-      const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer")
-      config.plugins.push(
-        new BundleAnalyzerPlugin({
-          analyzerMode: "static",
-          openAnalyzer: false,
-        }),
-      )
     }
 
     return config
@@ -152,19 +122,6 @@ const nextConfig = {
 
   // Generate ETags
   generateEtags: true,
-
-  // Optimize fonts
-  optimizeFonts: true,
-
-  // Enable gzip compression
-  compress: true,
-
-  // Reduce bundle size
-  modularizeImports: {
-    "lucide-react": {
-      transform: "lucide-react/dist/esm/icons/{{member}}",
-    },
-  },
 }
 
 module.exports = nextConfig

@@ -1,73 +1,40 @@
 "use client"
 
-import { useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 
-export const useScrollObserver = () => {
+export const useScrollObserver = (options = {}) => {
+  const [isIntersecting, setIsIntersecting] = useState(false)
+  const [hasIntersected, setHasIntersected] = useState(false)
+  const elementRef = useRef(null)
+
   useEffect(() => {
-    let observer = null
-    let timer = null
+    const element = elementRef.current
+    if (!element) return
 
-    try {
-      observer = new IntersectionObserver(
-        (entries) => {
-          try {
-            entries.forEach((entry) => {
-              try {
-                if (entry?.isIntersecting && entry.target) {
-                  entry.target.classList.add("scroll-visible")
-                  if (observer) {
-                    observer.unobserve(entry.target)
-                  }
-                }
-              } catch (entryError) {
-                // Silent error handling
-              }
-            })
-          } catch (entriesError) {
-            // Silent error handling
-          }
-        },
-        { threshold: 0.1 },
-      )
-
-      timer = setTimeout(() => {
-        try {
-          if (!observer) return
-
-          const elements = document.querySelectorAll(".stats")
-          if (elements?.length > 0) {
-            elements.forEach((el) => {
-              try {
-                if (el && observer) {
-                  observer.observe(el)
-                }
-              } catch (observeError) {
-                // Silent error handling
-              }
-            })
-          }
-        } catch (queryError) {
-          // Silent error handling
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsIntersecting(entry.isIntersecting)
+        if (entry.isIntersecting && !hasIntersected) {
+          setHasIntersected(true)
         }
-      }, 1000)
-    } catch (observerError) {
-      // Silent error handling
-    }
+      },
+      {
+        threshold: 0.1,
+        rootMargin: "50px",
+        ...options,
+      },
+    )
+
+    observer.observe(element)
 
     return () => {
-      try {
-        if (timer) {
-          clearTimeout(timer)
-          timer = null
-        }
-
-        if (observer) {
-          observer.disconnect()
-          observer = null
-        }
-      } catch (cleanupError) {
-        // Silent cleanup error handling
-      }
+      observer.unobserve(element)
     }
-  }, [])
+  }, [hasIntersected, options])
+
+  return {
+    elementRef,
+    isIntersecting,
+    hasIntersected,
+  }
 }

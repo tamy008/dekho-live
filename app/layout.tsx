@@ -1,12 +1,15 @@
 import type React from "react"
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
 import "./globals.css"
-import { Suspense } from "react"
-import type { Metadata, Viewport } from "next"
+
+const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Dekho - Digital Experience Platform",
-  description: "Immerse yourself in next-generation streaming, shopping, and content creation.",
-  keywords: "live streaming, social commerce, content creation, digital platform",
+  title: "Dekho - Discover Amazing Products",
+  description:
+    "Discover amazing products with our innovative platform featuring cutting-edge 3D effects and immersive experiences.",
+  keywords: "products, discovery, 3D, interactive, shopping, platform",
   authors: [{ name: "Dekho Team" }],
   creator: "Dekho",
   publisher: "Dekho",
@@ -15,14 +18,19 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
+  metadataBase: new URL("https://dekho-live.vercel.app"),
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "Dekho - Digital Experience Platform",
-    description: "Immerse yourself in next-generation streaming, shopping, and content creation.",
-    url: "https://dekho.vercel.app",
+    title: "Dekho - Discover Amazing Products",
+    description:
+      "Discover amazing products with our innovative platform featuring cutting-edge 3D effects and immersive experiences.",
+    url: "https://dekho-live.vercel.app",
     siteName: "Dekho",
     images: [
       {
-        url: "/og-image.webp",
+        url: "/dekho-logo.png",
         width: 1200,
         height: 630,
         alt: "Dekho Platform",
@@ -33,9 +41,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Dekho - Digital Experience Platform",
-    description: "Immerse yourself in next-generation streaming, shopping, and content creation.",
-    images: ["/og-image.webp"],
+    title: "Dekho - Discover Amazing Products",
+    description:
+      "Discover amazing products with our innovative platform featuring cutting-edge 3D effects and immersive experiences.",
+    images: ["/dekho-logo.png"],
   },
   robots: {
     index: true,
@@ -48,29 +57,10 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  verification: {
+    google: "your-google-verification-code",
+  },
     generator: 'v0.app'
-}
-
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 5,
-  userScalable: true,
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#6366f1" },
-    { media: "(prefers-color-scheme: dark)", color: "#0f0f23" },
-  ],
-}
-
-function LoadingFallback() {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
-      <div className="animate-pulse">
-        <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg mb-4"></div>
-        <div className="h-3 bg-white/20 rounded w-24"></div>
-      </div>
-    </div>
-  )
 }
 
 export default function RootLayout({
@@ -81,31 +71,18 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
-        {/* Critical resource hints */}
-        <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/favicon-large.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#0f0f23" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-
-        {/* Preload critical resources */}
-        <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
-        <link rel="preload" as="image" href="/dekho-logo.png" />
-
-        {/* Critical CSS inlined for faster rendering */}
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-            body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#0f0f23;color:#fff;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
-            *{margin:0;padding:0;box-sizing:border-box}
-            .animate-pulse{animation:pulse 2s cubic-bezier(0.4,0,0.6,1) infinite}
-            @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-            .will-change-transform{will-change:transform}
-            .gpu-accelerated{transform:translateZ(0);backface-visibility:hidden}
-          `,
-          }}
-        />
       </head>
-      <body className="antialiased gpu-accelerated">
-        <Suspense fallback={<LoadingFallback />}>{children}</Suspense>
+      <body className={`${inter.className} antialiased`}>
+        <div id="root">{children}</div>
       </body>
     </html>
   )

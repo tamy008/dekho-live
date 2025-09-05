@@ -5,27 +5,32 @@ import react from "@vitejs/plugin-react"
 export default defineConfig({
   plugins: [react()],
   build: {
-    outDir: "dist",
-    sourcemap: false,
-    minify: "terser",
     rollupOptions: {
       output: {
         manualChunks: {
           vendor: ["react", "react-dom"],
+          three: ["three", "@react-three/fiber", "@react-three/drei"],
         },
+      },
+    },
+    chunkSizeWarningLimit: 1000,
+    minify: "terser",
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
       },
     },
   },
   server: {
-    host: "0.0.0.0",
-    port: 5173,
-    hmr: {
-      port: 5173,
-      host: "0.0.0.0",
-    },
+    port: 3000,
+    host: true,
   },
   preview: {
-    host: "0.0.0.0",
-    port: 4173,
+    port: 3000,
+    host: true,
+  },
+  optimizeDeps: {
+    include: ["react", "react-dom"],
   },
 })

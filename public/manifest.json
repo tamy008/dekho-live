@@ -1,37 +1,31 @@
 {
-  "name": "Dekho - Digital Experience Platform",
+  "name": "Dekho - Discover Amazing Products",
   "short_name": "Dekho",
-  "description": "Immerse yourself in next-generation streaming, shopping, and content creation.",
+  "description": "Discover amazing products with our innovative platform featuring cutting-edge 3D effects and immersive experiences.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0f0f23",
   "theme_color": "#6366f1",
+  "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/dekho-logo.png",
-      "sizes": "192x192",
+      "src": "/favicon.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-large.png",
+      "sizes": "180x180",
       "type": "image/png"
     },
     {
       "src": "/dekho-logo.png",
       "sizes": "512x512",
-      "type": "image/png"
-    },
-    {
-      "src": "/dekho-logo.png",
-      "sizes": "180x180",
       "type": "image/png",
-      "purpose": "apple touch icon"
-    },
-    {
-      "src": "/dekho-logo.png",
-      "sizes": "16x16",
-      "type": "image/png"
-    },
-    {
-      "src": "/dekho-logo.png",
-      "sizes": "32x32",
-      "type": "image/png"
+      "purpose": "any maskable"
     }
-  ]
+  ],
+  "categories": ["shopping", "lifestyle", "productivity"],
+  "lang": "en",
+  "dir": "ltr"
 }

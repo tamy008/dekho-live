@@ -1,11 +1,23 @@
 "use client"
 
-import React, { useMemo } from "react"
+import React, { useMemo, useState, useEffect, Suspense, lazy } from "react"
 import "./App.css"
 import { useErrorHandler } from "./hooks/useErrorHandler.js"
 import { useMouseTracking } from "./hooks/useMouseTracking.js"
 import { useScrollObserver } from "./hooks/useScrollObserver.js"
 import { useNavigation } from "./hooks/useNavigation.js"
+
+// Lazy load components for better performance
+const HomePageLazy = lazy(() => import("../app/page"))
+const ExplorePageLazy = lazy(() => import("./ExplorePage"))
+const CreatePageLazy = lazy(() => import("./CreatePage"))
+
+// Loading component
+const LoadingSpinner = () => (
+  <div className="loading">
+    <div className="spinner"></div>
+  </div>
+)
 
 // Simple Error Boundary Component
 class ErrorBoundary extends React.Component {
@@ -335,6 +347,17 @@ const CreatePage = () => (
 )
 
 const App = () => {
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    // Simulate app initialization
+    const timer = setTimeout(() => {
+      setIsLoading(false)
+    }, 1000)
+
+    return () => clearTimeout(timer)
+  }, [])
+
   // Use custom hooks for cleaner code organization
   useErrorHandler()
   const mousePosition = useMouseTracking()
@@ -344,15 +367,19 @@ const App = () => {
   const currentPageComponent = useMemo(() => {
     switch (currentPage) {
       case "home":
-        return <HomePage />
+        return <HomePageLazy />
       case "explore":
-        return <ExplorePage />
+        return <ExplorePageLazy />
       case "create":
-        return <CreatePage />
+        return <CreatePageLazy />
       default:
-        return <HomePage />
+        return <HomePageLazy />
     }
   }, [currentPage])
+
+  if (isLoading) {
+    return <LoadingSpinner />
+  }
 
   return (
     <ErrorBoundary>
@@ -455,7 +482,9 @@ const App = () => {
         </nav>
 
         {/* Page Content */}
-        <main className={`page-content ${isTransitioning ? "transitioning" : ""}`}>{currentPageComponent}</main>
+        <main className={`page-content ${isTransitioning ? "transitioning" : ""}`}>
+          <Suspense fallback={<LoadingSpinner />}>{currentPageComponent}</Suspense>
+        </main>
       </div>
     </ErrorBoundary>
   )

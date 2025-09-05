@@ -29,11 +29,44 @@ body {
   color: var(--text-primary);
   line-height: 1.6;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .app {
   min-height: 100vh;
   position: relative;
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  padding: 20px;
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Enhanced Background with subtle animation */
@@ -551,18 +584,6 @@ body {
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.9), 0 0 20px rgba(99, 102, 241, 0.7), 0 0 30px rgba(236, 72, 153, 0.5);
 }
 
-.feature-card:hover .feature-icon {
-  transform: perspective(1000px) rotateY(10deg) rotateX(5deg) scale(1.1);
-  filter: drop-shadow(0 0 25px rgba(99, 102, 241, 0.6)) drop-shadow(0 0 35px rgba(236, 72, 153, 0.5))
-    drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
-}
-
-.feature-card:hover .feature-icon span {
-  filter: drop-shadow(0 0 30px rgba(255, 255, 255, 1)) drop-shadow(0 0 40px rgba(99, 102, 241, 0.8))
-    drop-shadow(0 0 50px rgba(236, 72, 153, 0.6));
-  text-shadow: 0 0 15px rgba(255, 255, 255, 1), 0 0 25px rgba(99, 102, 241, 0.9), 0 0 35px rgba(236, 72, 153, 0.7);
-}
-
 .icon-bg {
   position: absolute;
   inset: 0;
@@ -836,6 +857,19 @@ body {
   contain: layout style paint;
 }
 
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
 /* Performance optimizations for glow effects */
 .feature-icon span {
   contain: layout style;
@@ -861,4 +895,8 @@ body {
     filter: none !important;
     text-shadow: none !important;
   }
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
